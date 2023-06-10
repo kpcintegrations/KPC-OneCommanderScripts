@@ -1,0 +1,5 @@
+#PS
+Clear-Variable -Name PSScriptRoot -Force
+Set-Variable -Name 'PSScriptRoot' -Value 'C:\Program Files\PowerShell\Scripts\OC\' -Force
+. ($PSScriptRoot + '\Set-OCVariables.ps1') -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
+. ($PSScriptRoot + '\Add-OCVariable.ps1')

@@ -1,0 +1,1 @@
+wt -p "Windows PowerShell" -d $CurrentDir

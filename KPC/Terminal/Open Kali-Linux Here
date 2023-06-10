@@ -1,0 +1,1 @@
+wt -p "kali-linux" -d $CurrentDir
