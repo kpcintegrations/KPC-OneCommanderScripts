@@ -8,5 +8,6 @@ param (
 if (!(Test-Path -Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     winget install Microsoft.PowerShell --scope machine --silent
 }
+. ".\OC\Invoke-OCInit.ps1"
 Copy-Item -Recurse -Path ($PSScriptRoot + '\KPC\') -Destination $OCResourcesScriptsPath -Force
 Copy-Item -Recurse -Path ($PSScriptRoot + '\OC\') -Destination "C:\Program Files\PowerShell\Scripts\" -Force
