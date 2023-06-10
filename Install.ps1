@@ -5,6 +5,5 @@ param (
     [string]
     $OCResourcesScriptsPath
 )
-git clone https://github.com/kpcintegrations/KPC-OneCommanderScripts.git "C:\Temp\KPC\"
-Move-Item -Path "C:\Temp\KPC\KPC\" -Destination $OCResourcesScriptsPath -Force
-Move-Item -Path "C:\Temp\KPC\OC\" -Destination "C:\Program Files\PowerShell\Scripts\" -Force
+Move-Item -Path ($PSScriptRoot + '\KPC\') -Destination $OCResourcesScriptsPath -Force
+Move-Item -Path ($PSScriptRoot + '\OC\') -Destination "C:\Program Files\PowerShell\Scripts\" -Force
