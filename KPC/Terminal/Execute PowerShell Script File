@@ -1,2 +1,2 @@
 #PS
-'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -Interactive -NoExit -File $SelectedFiles
+'C:\Program Files\PowerShell\7\pwsh.exe' -Interactive -NoExit -File $SelectedFiles
