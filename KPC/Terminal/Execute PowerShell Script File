@@ -1,2 +1,2 @@
 #PS
-pwsh -NoProfile -Interactive -NoExit -File $SelectedFiles
+wt pwsh -NoProfile -Interactive -NoExit -File $SelectedFiles
