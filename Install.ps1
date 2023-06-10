@@ -5,6 +5,12 @@ param (
     [string]
     $OCResourcesScriptsPath
 )
+if (!(Test-Path -Path "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal*x64*\wt.exe")) {
+    winget install Microsoft.WindowsTerminal
+}
+else {
+    Write-Host "WT Already Installed"
+}
 if (!(Test-Path -Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     winget install Microsoft.PowerShell --scope machine --silent
 }
