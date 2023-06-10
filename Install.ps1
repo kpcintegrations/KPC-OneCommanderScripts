@@ -5,5 +5,8 @@ param (
     [string]
     $OCResourcesScriptsPath
 )
-Move-Item -Path ($PSScriptRoot + '\KPC\') -Destination $OCResourcesScriptsPath -Force
-Move-Item -Path ($PSScriptRoot + '\OC\') -Destination "C:\Program Files\PowerShell\Scripts\" -Force
+if (!(Test-Path -Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
+    winget install Microsoft.PowerShell --scope machine --silent
+}
+Copy-Item -Recurse -Path ($PSScriptRoot + '\KPC\') -Destination $OCResourcesScriptsPath -Force
+Copy-Item -Recurse -Path ($PSScriptRoot + '\OC\') -Destination "C:\Program Files\PowerShell\Scripts\" -Force
