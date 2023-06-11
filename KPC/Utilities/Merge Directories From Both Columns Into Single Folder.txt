@@ -1,0 +1,3 @@
+#PS
+. 'C:\Program Files\PowerShell\Scripts\OC\Set-OCVariables.ps1' -CurrentDir $CurrentDir -OpDir $OpDir
+wt pwsh -NoProfile -Interactive -NoExit -File 'C:\Program Files\PowerShell\Scripts\OC\Merge-Directories.ps1'
