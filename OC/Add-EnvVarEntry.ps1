@@ -13,7 +13,7 @@ if (!($SingleEntry)) {
 $CurEnvVar = [System.Environment]::GetEnvironmentVariable($EnvVarName)
 $CurEnvVarArray = $CurEnvVar | Split-String -Separator ';'
 $CurEnvVarArray += $EnvVarEntry
-New-Variable -Name "BuiltString" -Value "" -Scope Global
+New-Variable -Name "BuiltString" -Value $null -Scope Global
 $CurEnvVarArray | ForEach-Object -Process {
     $TmpVar = (Get-Variable -Name "BuiltString" -ValueOnly -Scope Global)
     Set-variable -Name "BuiltString" -Value "$TmpVar$_`;" -Scope Global
