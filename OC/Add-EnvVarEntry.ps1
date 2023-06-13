@@ -9,6 +9,7 @@ param (
     [switch]
     $SingleEntry
 )
+if (!($SingleEntry)) {
 $CurEnvVar = [System.Environment]::GetEnvironmentVariable($EnvVarName)
 $CurEnvVarArray = $CurEnvVar | Split-String -Separator ';'
 $CurEnvVarArray += 'C:\Test'
@@ -19,3 +20,7 @@ $CurEnvVarArray | ForEach-Object -Process {
 }
 $JustInCaseBuiltString = Get-Variable -Name "BuiltString" -ValueOnly -Scope Global
 [System.Environment]::SetEnvironmentVariable("PATH",$JustInCaseBuiltString)
+}
+else {
+    [System.Environment]::SetEnvironmentVariable($EnvVarName,$EnvVarEntry,'Machine')
+}
