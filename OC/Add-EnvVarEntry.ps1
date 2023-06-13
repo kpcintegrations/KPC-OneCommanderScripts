@@ -19,7 +19,7 @@ $CurEnvVarArray | ForEach-Object -Process {
     Set-variable -Name "BuiltString" -Value "$TmpVar$_`;" -Scope Global
 }
 $JustInCaseBuiltString = Get-Variable -Name "BuiltString" -ValueOnly -Scope Global
-[System.Environment]::SetEnvironmentVariable("PATH",$JustInCaseBuiltString)
+[System.Environment]::SetEnvironmentVariable("PATH",$JustInCaseBuiltString,'Machine')
 }
 else {
     [System.Environment]::SetEnvironmentVariable($EnvVarName,$EnvVarEntry,'Machine')
