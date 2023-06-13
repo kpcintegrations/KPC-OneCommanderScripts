@@ -1,4 +1,4 @@
 #PS
 winget install Google.PlatformTools --location 'C:\'
 Remove-Item -Path 'C:\*.db'
-Add-EnvVarEntry.ps1 -EnvVarEntry $CurrentDir -EnvVarName 'PATH'
+. "C:\Program Files\PowerShell\OC\Add-EnvVarEntry.ps1" -EnvVarEntry $CurrentDir -EnvVarName 'PATH'
