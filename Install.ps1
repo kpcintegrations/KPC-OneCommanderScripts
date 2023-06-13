@@ -6,7 +6,7 @@ param (
     $OCResourcesScriptsPath
 )
 if (!(Test-Path -Path "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal*x64*\wt.exe")) {
-    winget install Microsoft.WindowsTerminal
+    winget install Microsoft.WindowsTerminal --silent
 }
 else {
     Write-Host "WT Already Installed"
