@@ -11,7 +11,7 @@ param (
 )
 if (!($SingleEntry)) {
 $CurEnvVar = [System.Environment]::GetEnvironmentVariable($EnvVarName)
-$CurEnvVarArray = $CurEnvVar | Split-String -Separator ';'
+$CurEnvVarArray = $CurEnvVar | Split-String -Separator ';' -RemoveEmptyStrings
 $CurEnvVarArray += $EnvVarEntry
 New-Variable -Name "BuiltString" -Value $null -Scope Global
 $CurEnvVarArray | ForEach-Object -Process {
