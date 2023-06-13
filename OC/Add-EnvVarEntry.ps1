@@ -10,7 +10,12 @@ param (
     $SingleEntry
 )
 $CurEnvVar = [System.Environment]::GetEnvironmentVariable($EnvVarToAddTo)
-$CurEnvVarArray = $CurEnvVar | Split-String -Separator ";"
-$CurEnvVarArray += $PathToAdd
-$NewEnvVar = $CurEnvVarArray | Join-String -Separator ";"
-[System.Environment]::SetEnvironmentVariable("PATH",$NewEnvVar)
+$CurEnvVarArray = $CurEnvVar | Split-String -Separator ';'
+$CurEnvVarArray += 'C:\Test'
+New-Variable -Name "BuiltString" -Value "" -Scope Global
+$CurEnvVarArray | ForEach-Object -Process {
+    $TmpVar = (Get-Variable -Name "BuiltString" -ValueOnly -Scope Global)
+    Set-variable -Name "BuiltString" -Value "$TmpVar$_`;" -Scope Global
+}
+$JustInCaseBuiltString = Get-Variable -Name "BuiltString" -ValueOnly -Scope Global
+[System.Environment]::SetEnvironmentVariable("PATH",$JustInCaseBuiltString)
