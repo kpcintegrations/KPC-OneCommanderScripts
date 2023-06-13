@@ -9,7 +9,7 @@ param (
     [switch]
     $SingleEntry
 )
-$CurEnvVar = [System.Environment]::GetEnvironmentVariable($EnvVarToAddTo)
+$CurEnvVar = [System.Environment]::GetEnvironmentVariable($EnvVarName)
 $CurEnvVarArray = $CurEnvVar | Split-String -Separator ';'
 $CurEnvVarArray += 'C:\Test'
 New-Variable -Name "BuiltString" -Value "" -Scope Global
