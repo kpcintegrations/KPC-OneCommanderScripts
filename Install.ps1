@@ -5,7 +5,7 @@ param (
     [string]
     $OCResourcesScriptsPath
 )
-if (!(Test-Path -Path "C:\Program Files\WindowsApps\Microsoft.WindowsTerminal*x64*\wt.exe")) {
+if (!(Get-Command wt.exe -CommandType Application -ErrorAction SilentlyContinue)) {
     winget install Microsoft.WindowsTerminal --silent
 }
 else {
