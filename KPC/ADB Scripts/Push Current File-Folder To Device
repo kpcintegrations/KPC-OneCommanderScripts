@@ -1,0 +1,3 @@
+#PS
+. 'C:\Program Files\PowerShell\Scripts\OC\Set-OCVariables.ps1' -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
+. 'C:\Program Files\PowerShell\Scripts\OC\Push-OCFileFolder.ps1'
