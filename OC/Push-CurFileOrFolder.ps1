@@ -28,8 +28,9 @@ $SelectedDevice = {
     $Directories = Get-Content -Path "$PSScriptRoot\listofdirectories.txt"
     $Directories | ForEach-Object {
         $InputTextBox2.Items.Add($_)
+        $InputTextBox2.Refresh()
     }
-    $InputTextBox2.Refresh()
+    
 }
 $MainForm.Controls.Add($InputTextBox)
 
@@ -53,7 +54,7 @@ $PushButton.Location = New-Object System.Drawing.Size(200,500)
 $MainForm.Controls.Add($PushButton)
 
 $PushButton.Add_Click($PushTheFiles)
-if ($OCVars.SelectedFiles -ne $null) {
+if ($OCVars.SelectedFiles -ne "") {
     $PushTheFiles = {
         $OCVars.SelectedFiles | ForEach-Object {
         . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem push $_ $InputTextBox2.SelectedItem
