@@ -54,14 +54,14 @@ $MainForm.Controls.Add($PushButton)
 
 $PushButton.Add_Click($PushTheFiles)
 if ($OCVars.SelectedFiles -ne $null) {
-    $PushTheFiles {
+    $PushTheFiles = {
         $OCVars.SelectedFiles | ForEach-Object {
         . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem push $_ $InputTextBox2.SelectedItem
     }
 }
 }
 else {
-$PushTheFiles {
+$PushTheFiles = {
     . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem push $OCVars.CurrentDir $InputTextBox2.SelectedItem
 }
 }
