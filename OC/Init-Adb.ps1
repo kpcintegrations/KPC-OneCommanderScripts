@@ -1,0 +1,29 @@
+        try {
+            $adbOuput = Start-Process -PassThru -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices'
+        }
+        catch {
+            Write-Host "ADB Not Installed! Installing Now..."
+            Invoke-WebRequest -Uri "https://dl.google.com/android/repository/platform-tools_r34.0.3-windows.zip" -OutFile "$PSScriptRoot\platform-tools.zip"
+            Expand-Archive -Path "$PSScriptRoot\platform-tools.zip" -OutputPath $PSScriptRoot -Force
+            Remove-Item -Path "$PSScriptRoot\platform-tools.zip" -Force
+            $adbOuput = Start-Process -PassThru -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices'
+        }
+        if ($adbOuput.ExitCode -eq 0) {
+            Start-Process -NoNewWindow -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices' -RedirectStandardOutput "$PSScriptRoot\adbdevicesout.txt"
+            $OutputDevices = Get-Content -Path "$PSScriptRoot\adbdevicesout.txt" -Force
+            Remove-Item -Path "$PSScriptRoot\adbdevicesout.txt"
+            [Collections.Generic.List[Object]]$DeviceList = @()
+            for ($i=0;$i -lt $OutputDevices.Length;$i++) {
+                if ($i -eq 0 -or $i -eq ($OutputDevices.Length -1)) {}
+                else {
+                    $DeviceList.Add(($OutputDevices[$i]))
+                }
+            }
+        }
+        else {
+            Write-Host "No Devices To List Or Other adb.exe Problem"
+        }
+$DeviceList = $DeviceList | ForEach-Object {
+    $_.Replace("device","").TrimEnd()
+}
+$DeviceList | Out-File -FilePath "$PSScriptRoot\adbdevices.txt" -Encoding utf8

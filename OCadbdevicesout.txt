@@ -1,0 +1,4 @@
+List of devices attached
+RF8R51LAB8K	device
+127.0.0.1:58526	device
+
