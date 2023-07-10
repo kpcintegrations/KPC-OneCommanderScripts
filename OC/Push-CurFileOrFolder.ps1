@@ -21,12 +21,8 @@ $DevicesAvaialable | ForEach-Object {
     $InputTextBox.Items.Add($_)
 }
 
-$InputTextBox.add_SelectedIndexChanged($SelectedDevice)
-$SelectedDevice = {
-    . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem shell ls /sdcard/ |
-        ForEach-Object { $InputTextBox2.Items.Add($_) }
-    $InputTextBox2.Refresh()
-}
+$adbPath = "$PSScriptRoot\platform-tools\adb.exe"
+
 $MainForm.Controls.Add($InputTextBox)
 
 $Label2 = New-Object System.Windows.Forms.Label
@@ -42,23 +38,31 @@ $InputTextBox2.Size = New-Object System.Drawing.Size(400,300)
 $InputTextBox2.Location = New-Object System.Drawing.Size(50,175)
 $MainForm.Controls.Add($InputTextBox2)
 
+$SelectedDevice = {
+    $InputTextBox2.Items.Clear()
+    & $adbPath -s $InputTextBox.SelectedItem shell ls /sdcard/ |
+        ForEach-Object { $InputTextBox2.Items.Add($_) }
+    $InputTextBox2.Refresh()
+}
+$InputTextBox.add_SelectedIndexChanged($SelectedDevice)
+
 $PushButton = New-Object System.Windows.Forms.Button
 $PushButton.Text = "Push"
 $PushButton.Size = New-Object System.Drawing.Size(100,50)
 $PushButton.Location = New-Object System.Drawing.Size(200,500)
 $MainForm.Controls.Add($PushButton)
-
 $PushButton.Add_Click($PushTheFiles)
+
 if ($OCVars.SelectedFiles -ne "") {
     $PushTheFiles = {
         $OCVars.SelectedFiles | ForEach-Object {
-        . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem push $_ $InputTextBox2.SelectedItem
+        & $adbPath -s $InputTextBox.SelectedItem push $_ $InputTextBox2.SelectedItem
     }
 }
 }
 else {
 $PushTheFiles = {
-    . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem push $OCVars.CurrentDir $InputTextBox2.SelectedItem
+    & $adbPath -s $InputTextBox.SelectedItem push $OCVars.CurrentDir $InputTextBox2.SelectedItem
 }
 }
 
