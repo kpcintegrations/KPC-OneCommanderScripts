@@ -6,13 +6,22 @@ if (!(Get-Command wt.exe -CommandType Application -ErrorAction SilentlyContinue)
 else {
     Write-Host "WT Already Installed"
 }
-if (!(Test-Path -Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
+if (!(Test-Path -Path "C:\Program Files\PowerShell\7\pwsh.exe") -or !(Test-Path -Path "C:\Program Files\PowerShell\7-preview\pwsh.exe")) {
     winget install Microsoft.PowerShell --scope machine --silent
 }
+else {
+    Write-Host "PowerShell 7 Already Installed"
+}
 $OCPath = (Get-Process OneCommander).Path
-$ParseOCPath = $OCPath.Replace("OneCommander.exe","") + 'Resources\Scripts\'
-Write-Host $ParseOCPath
-<#
-Copy-Item -Recurse -Path ($PSScriptRoot + '\KPC\') -Destination $OCResourcesScriptsPath -Force
-Copy-Item -Recurse -Path ($PSScriptRoot + '\OC\') -Destination "C:\Program Files\PowerShell\Scripts\" -Force
-. "C:\Program Files\PowerShell\Scripts\OC\Invoke-OCInit.ps1"#>
+$ParseOCPath = $OCPath.Replace("onecommander.exe","") + 'Resources\Scripts\'
+if (Test-Path $ParseOCPath) {
+    Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
+    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination ($ParseOCPath | Join-Path -ChildPath "..\KPC\") -Force
+    #. "C:\Program Files\PowerShell\Scripts\OC\Invoke-OCInit.ps1"
+}
+else {
+    New-Item -Path $ParseOCPath -ItemType Directory -Force
+    Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
+    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination ($ParseOCPath | Join-Path -ChildPath "..\KPC\") -Force
+    #. "C:\Program Files\PowerShell\Scripts\OC\Invoke-OCInit.ps1"
+}
