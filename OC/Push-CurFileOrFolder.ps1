@@ -23,14 +23,9 @@ $DevicesAvaialable | ForEach-Object {
 
 $InputTextBox.add_SelectedIndexChanged($SelectedDevice)
 $SelectedDevice = {
-    $InputTextBox2.Items.Clear()
-    . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem shell ls /sdcard/ | Out-File -FilePath "$PSScriptRoot\listofdirectories.txt" -Force
-    $Directories = Get-Content -Path "$PSScriptRoot\listofdirectories.txt"
-    $Directories | ForEach-Object {
-        $InputTextBox2.Items.Add($_)
-        $InputTextBox2.Refresh()
-    }
-    
+    . "$PSScriptRoot\platform-tools\adb.exe" -s $InputTextBox.SelectedItem shell ls /sdcard/ |
+        ForEach-Object { $InputTextBox2.Items.Add($_) }
+    $InputTextBox2.Refresh()
 }
 $MainForm.Controls.Add($InputTextBox)
 
