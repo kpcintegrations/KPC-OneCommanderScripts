@@ -1,2 +1,2 @@
 #PS
-Get-Variable
+[System.Environment]::GetCommandLineArgs() -join ' ' | Out-File C:\KyleTemp\occommandlineargs.txt
