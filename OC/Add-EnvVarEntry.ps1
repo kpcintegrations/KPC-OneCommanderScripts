@@ -27,12 +27,12 @@ $MainForm.Controls.Add($Label2)
 $MainForm.Controls.Add($Input2)
 $MainForm.Controls.Add($Button)
 $Button.add_Click($OCSB)
-$OCSB = { [System.Environment]::GetEnvironmentVariable($$Input1.Text)
+$OCSB = { [System.Environment]::GetEnvironmentVariable($Input1.Text)
 $CurEnvVarArray = $OCSB | Split-String -Separator ';' -RemoveEmptyStrings
 if ($CurEnvVarArray.Count -gt 1){
 $CurEnvVarArray.Add("`;$Input2.Text")
 [System.Environment]::SetEnvironmentVariable("$Input1.Text",$CurEnvVarArray,'Machine')
 }
 else {
-    [System.Environment]::SetEnvironmentVariable($EnvVarName,$EnvVarEntry,'Machine')
+    [System.Environment]::SetEnvironmentVariable($Input1.Text,$Input2.Text,'Machine')
 }
