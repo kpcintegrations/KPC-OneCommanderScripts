@@ -14,14 +14,15 @@ else {
 }
 $OCPath = (Get-Process OneCommander).Path
 $ParseOCPath = $OCPath.Replace("onecommander.exe","") + 'Resources\Scripts\'
+$ParseParseOCPath = ($ParseOCPath | Join-Path -ChildPath "..\KPC\")
 if (Test-Path $ParseOCPath) {
     Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
-    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination ($ParseOCPath | Join-Path -ChildPath "..\KPC\") -Force
-    #. "C:\Program Files\PowerShell\Scripts\OC\Invoke-OCInit.ps1"
+    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination $ParseParseOCPath -Force
+    . "$ParseParseOCPath\Invoke-OCInit.ps1"
 }
 else {
     New-Item -Path $ParseOCPath -ItemType Directory -Force
     Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
-    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination ($ParseOCPath | Join-Path -ChildPath "..\KPC\") -Force
-    #. "C:\Program Files\PowerShell\Scripts\OC\Invoke-OCInit.ps1"
+    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination $ParseParseOCPath -Force
+    . "$ParseParseOCPath\Invoke-OCInit.ps1"
 }
