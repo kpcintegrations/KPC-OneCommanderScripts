@@ -19,5 +19,5 @@ $OCVarHash = @{
     MultiSelection = $SelMultList
     OppositeDir    = $OpDir
 }
-$OCVarHash | Export-Clixml -Path ($PSScriptRoot + '\Export\Vars.xml') -Force
+$OCVarHash | Export-Clixml -Path "$PSScriptRoot\Export\Vars.xml" -Force
 
