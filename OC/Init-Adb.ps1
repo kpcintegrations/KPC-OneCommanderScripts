@@ -9,9 +9,9 @@
             $adbOuput = Start-Process -PassThru -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices'
         }
         if ($adbOuput.ExitCode -eq 0) {
-            Start-Process -NoNewWindow -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices' -RedirectStandardOutput "$PSScriptRoot\adbdevicesout.txt"
-            $OutputDevices = Get-Content -Path "$PSScriptRoot\adbdevicesout.txt" -Force
-            Remove-Item -Path "$PSScriptRoot\adbdevicesout.txt"
+            Start-Process -NoNewWindow -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices' -RedirectStandardOutput "$PSScriptRoot\Export\adbdevicesout.txt"
+            $OutputDevices = Get-Content -Path "$PSScriptRoot\Export\adbdevicesout.txt" -Force
+            Remove-Item -Path "$PSScriptRoot\Export\adbdevicesout.txt"
             [Collections.Generic.List[Object]]$DeviceList = @()
             for ($i=0;$i -lt $OutputDevices.Length;$i++) {
                 if ($i -eq 0 -or $i -eq ($OutputDevices.Length -1)) {}
@@ -26,4 +26,4 @@
 $DeviceList = $DeviceList | ForEach-Object {
     $_.Replace("device","").TrimEnd()
 }
-$DeviceList | Out-File -FilePath "$PSScriptRoot\adbdevices.txt" -Encoding utf8
+$DeviceList | Out-File -FilePath "$PSScriptRoot\Export\adbdevices.txt" -Encoding utf8
