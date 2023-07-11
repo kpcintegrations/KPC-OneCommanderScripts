@@ -35,4 +35,4 @@ $CurEnvVarArray.Add("`;$Input2.Text")
 }
 else {
     [System.Environment]::SetEnvironmentVariable($Input1.Text,$Input2.Text,'Machine')
-}
+}}
