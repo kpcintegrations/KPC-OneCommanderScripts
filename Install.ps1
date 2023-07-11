@@ -1,12 +1,12 @@
 # Installs OC Scripts and PS Scripts that accompany the OC Scripts
 # Must Have OneCommander Running While Installing
 if (!(Get-Command wt.exe -CommandType Application -ErrorAction SilentlyContinue)) {
-    winget install Microsoft.WindowsTerminal --silent
+    winget install Microsoft.WindowsTerminal --scope machine --silent
 }
 else {
     Write-Host "WT Already Installed"
 }
-if (!(Test-Path -Path "C:\Program Files\PowerShell\7\pwsh.exe") -or !(Test-Path -Path "C:\Program Files\PowerShell\7-preview\pwsh.exe")) {
+if (!(Get-Command pwsh.exe -CommandType Application -ErrorAction SilentlyContinue)) {
     winget install Microsoft.PowerShell --scope machine --silent
 }
 else {
