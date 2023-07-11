@@ -1,1 +1,2 @@
-
+#PS
+wsl list --installed
