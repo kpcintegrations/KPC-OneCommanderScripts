@@ -2,7 +2,7 @@ Add-Type -AssemblyName System.Windows.Forms
 
 $OCVars = Import-Clixml -Path "$PSScriptRoot\Export\Vars.xml"
 
-$DevicesAvaialable = Get-Content -Path "$PSScriptRoot\adbdevices.txt"
+$DevicesAvaialable = Get-Content -Path "$PSScriptRoot\Export\adbdevices.txt"
 
 $MainForm = New-Object System.Windows.Forms.Form
 $MainForm.StartPosition = "CenterScreen"
