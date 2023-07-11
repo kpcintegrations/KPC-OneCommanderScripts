@@ -13,7 +13,7 @@ else {
     Write-Host "PowerShell 7 Already Installed"
 }
 $OCPath = (Get-Process OneCommander).Path
-$ParseOCPath = $OCPath.Replace("OneCommander.exe","") + 'Resources\Scripts\'
+$ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName + '\Resources\Scripts\'
 $ParseParseOCPath = ($ParseOCPath | Join-Path -ChildPath "..\KPC\")
     New-Item -Path $ParseOCPath -ItemType Directory -Force
     Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force

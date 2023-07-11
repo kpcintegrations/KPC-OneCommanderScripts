@@ -29,6 +29,7 @@ Copy-Item -Path (Join-Path $OpDir *) -Destination $Folder -Recurse}
 else {
     
 }
+}
 $Button.add_Click($DoItNow)
 $MainForm.Controls.Add($Label)
 $MainForm.Controls.Add($TextBox)
