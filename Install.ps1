@@ -13,16 +13,9 @@ else {
     Write-Host "PowerShell 7 Already Installed"
 }
 $OCPath = (Get-Process OneCommander).Path
-$ParseOCPath = $OCPath.Replace("onecommander.exe","") + 'Resources\Scripts\'
+$ParseOCPath = $OCPath.Replace("OneCommander.exe","") + 'Resources\Scripts\'
 $ParseParseOCPath = ($ParseOCPath | Join-Path -ChildPath "..\KPC\")
-if (Test-Path $ParseOCPath) {
-    Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
-    Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination $ParseParseOCPath -Force
-    . "$ParseParseOCPath\Invoke-OCInit.ps1"
-}
-else {
     New-Item -Path $ParseOCPath -ItemType Directory -Force
     Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
     Copy-Item -Recurse -Path "$PSScriptRoot\OC\" -Destination $ParseParseOCPath -Force
     . "$ParseParseOCPath\Invoke-OCInit.ps1"
-}
