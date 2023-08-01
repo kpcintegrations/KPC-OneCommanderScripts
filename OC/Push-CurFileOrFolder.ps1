@@ -52,19 +52,19 @@ $PushButton.Size = New-Object System.Drawing.Size(100,50)
 $PushButton.Location = New-Object System.Drawing.Size(200,500)
 $MainForm.Controls.Add($PushButton)
 
-
+$Global:PushTheFiles = ""
 if ($OCVars.SelectedFiles -ne "") {
-    $PushTheFiles = {
+    $Global:PushTheFiles = {
         $OCVars.SelectedFiles | ForEach-Object {
         & $adbPath -s $InputTextBox.SelectedItem push $_ $InputTextBox2.SelectedItem
     }
 }
 }
 else {
-$PushTheFiles = {
+$Global:PushTheFiles = {
     & $adbPath -s $InputTextBox.SelectedItem push $OCVars.SelectedFiles ('/sdcard/' + $InputTextBox2.SelectedItem)
 }
 }
-Write-Warning "InputTextBox2" $InputTextBox2
+Write-Warning "InputTextBox2" $InputTextBox2.SelectedItem
 $PushButton.Add_Click($PushTheFiles)
 $MainForm.ShowDialog()
