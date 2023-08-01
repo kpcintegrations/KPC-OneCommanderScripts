@@ -65,6 +65,6 @@ $Global:PushTheFiles = {
     & $adbPath -s $InputTextBox.SelectedItem push $OCVars.SelectedFiles ('/sdcard/' + $InputTextBox2.SelectedItem)
 }
 }
-Write-Warning "InputTextBox2" $InputTextBox2.SelectedItem
+Write-Host "InputTextBox2" $InputTextBox2.SelectedItem
 $PushButton.Add_Click($PushTheFiles)
 $MainForm.ShowDialog()
