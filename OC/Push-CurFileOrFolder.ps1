@@ -66,5 +66,5 @@ $Global:PushTheFiles = {
 }
 }
 Write-Warning "InputTextBox2" $InputTextBox2.SelectedItem
-$PushButton.Add_Click($PushTheFiles)
+$PushButton.Add_Click($Global:PushTheFiles)
 $MainForm.ShowDialog()
