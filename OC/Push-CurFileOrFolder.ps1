@@ -62,8 +62,9 @@ if ($OCVars.SelectedFiles -ne "") {
 }
 else {
 $PushTheFiles = {
-    & $adbPath -s $InputTextBox.SelectedItem push $OCVars.SelectedFiles (Join-Path /sdcard/ $InputTextBox2.SelectedItem)
+    & $adbPath -s $InputTextBox.SelectedItem push $OCVars.SelectedFiles ('/sdcard/' + $InputTextBox2.SelectedItem)
 }
 }
+Write-Warning "InputTextBox2" $InputTextBox2
 $PushButton.Add_Click($PushTheFiles)
 $MainForm.ShowDialog()
