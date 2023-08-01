@@ -51,7 +51,7 @@ $PushButton.Text = "Push"
 $PushButton.Size = New-Object System.Drawing.Size(100,50)
 $PushButton.Location = New-Object System.Drawing.Size(200,500)
 $MainForm.Controls.Add($PushButton)
-$PushButton.Add_Click($PushTheFiles)
+
 
 if ($OCVars.SelectedFiles -ne "") {
     $PushTheFiles = {
@@ -65,5 +65,5 @@ $PushTheFiles = {
     & $adbPath -s $InputTextBox.SelectedItem push $OCVars.CurrentDir $InputTextBox2.SelectedItem
 }
 }
-
+$PushButton.Add_Click($PushTheFiles)
 $MainForm.ShowDialog()
