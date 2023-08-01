@@ -1,4 +1,6 @@
 #PS
-. 'C:\Program Files\PowerShell\Scripts\OC\Set-OCVariables.ps1' -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
-. 'C:\Program Files\PowerShell\Scripts\OC\Init-Adb.ps1'
-. 'C:\Program Files\PowerShell\Scripts\OC\Push-CurFileOrFolder.ps1'
+$OCPath = (Get-Process OneCommander).Path
+$ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
+& ($ParseOCPath | Join-Path '\KPC\Set-OCVariables.ps1') -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
+& ($ParseOCPath | Join-Path '\KPC\Init-Adb.ps1')
+& ($ParseOCPath | Join-Path '\KPC\Push-CurFileOrFolder.ps1')
