@@ -3,4 +3,4 @@ $OCPath = (Get-Process OneCommander).Path
 $ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
 & (Join-Path $ParseOCPath 'Resources\KPC\Set-OCVariables.ps1') -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
 & (Join-Path $ParseOCPath 'Resources\KPC\Init-Adb.ps1')
-wt pwsh -Interactive -Command {& (Join-Path $ParseOCPath 'Resources\KPC\Push-CurFileOrFolder.ps1')}
+wt pwsh -Interactive -Command {. (Join-Path $ParseOCPath 'Resources\KPC\Push-CurFileOrFolder.ps1')}
