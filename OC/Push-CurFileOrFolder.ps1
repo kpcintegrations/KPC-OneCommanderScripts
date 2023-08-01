@@ -62,7 +62,7 @@ if ($OCVars.SelectedFiles -ne "") {
 }
 else {
 $PushTheFiles = {
-    & $adbPath -s $InputTextBox.SelectedItem push $OCVars.CurrentDir $InputTextBox2.SelectedItem
+    & $adbPath -s $InputTextBox.SelectedItem push $OCVars.SelectedFiles (Join-Path /sdcard/ $InputTextBox2.SelectedItem)
 }
 }
 $PushButton.Add_Click($PushTheFiles)
