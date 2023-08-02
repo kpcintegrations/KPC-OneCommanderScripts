@@ -1,2 +1,5 @@
 #PS
-wt -d $CurrentDir
+$OCPath = (Get-Process OneCommander).Path
+$ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
+& (Join-Path $ParseOCPath 'Resources\KPC\Set-OCVariables.ps1') -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
+& (Join-Path $ParseOCPath 'Resources\KPC\Invoke-Terminals.ps1') -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
