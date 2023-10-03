@@ -4,7 +4,7 @@
         catch {
             Write-Host "ADB Not Installed! Installing Now..."
             Invoke-WebRequest -Uri "https://dl.google.com/android/repository/platform-tools_r34.0.3-windows.zip" -OutFile "$PSScriptRoot\platform-tools.zip"
-            Expand-Archive -Path "$PSScriptRoot\platform-tools.zip" -DestinationPath $PSScriptRoot -Force
+            Microsoft.PowerShell.Archive\Expand-Archive -Path "$PSScriptRoot\platform-tools.zip" -DestinationPath $PSScriptRoot -Force
             Remove-Item -Path "$PSScriptRoot\platform-tools.zip" -Force
             $adbOuput = Start-Process -PassThru -Wait -FilePath "$PSScriptRoot\platform-tools\adb.exe" -ArgumentList 'devices'
         }

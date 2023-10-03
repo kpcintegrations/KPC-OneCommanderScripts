@@ -14,4 +14,4 @@ else {
 Add-Content -Path $PROFILE -Value $RawProfileContent
 }
 $VarHash = @{}
-$VarHash | Export-Clixml -Path "$Path\CusVars.xml"
+$VarHash | Export-Clixml -Path "$Path\Vars.xml"

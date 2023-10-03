@@ -56,15 +56,16 @@ $Global:PushTheFiles = ""
 if ($OCVars.SelectedFiles -ne "") {
     $Global:PushTheFiles = {
         $OCVars.SelectedFiles | ForEach-Object {
-        & $adbPath -s $InputTextBox.SelectedItem push $_ $InputTextBox2.SelectedItem
+        & $adbPath -s $InputTextBox.SelectedItem push $_ ('/sdcard/' + $InputTextBox2.SelectedItem.Text)
     }
+    $MainForm.Close()
 }
 }
 else {
 $Global:PushTheFiles = {
-    & $adbPath -s $InputTextBox.SelectedItem.Text push $OCVars.SelectedFiles ('/sdcard/' + $InputTextBox2.SelectedItem.Text)
+    & $adbPath -s $InputTextBox.SelectedItem.Text push $OCVars.CurrentDir ('/sdcard/' + $InputTextBox2.SelectedItem.Text)
+    $MainForm.Close()
 }
 }
-Write-Warning "InputTextBox2" $InputTextBox2.SelectedItem.Text
 $PushButton.Add_Click($Global:PushTheFiles)
 $MainForm.ShowDialog()

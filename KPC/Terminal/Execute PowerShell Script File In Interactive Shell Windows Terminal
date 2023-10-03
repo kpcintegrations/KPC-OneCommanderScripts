@@ -1,2 +1,2 @@
 #PS
-$SelectedFiles | ForEach-Object { wt pwsh -NoProfile -Interactive -NoExit -Command {& $_}}
+$SelectedFiles | ForEach-Object { wt pwsh -NoProfile -Interactive -NoExit -File $_}
