@@ -25,7 +25,7 @@ public class DPIAware {
 [DPIAware]::SetProcessDpiAwarenessContext([DPIAware]::PER_MONITOR_AWARE_V2)
 Add-Type -AssemblyName System.Drawing
 
-$SysEnvVars = [System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::Machine).GetEnumerator() | Sort-Object Key
+$SysEnvVars = [System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::User).GetEnumerator() | Sort-Object Key
 $SysVarsKeysList = $SysEnvVars.Key
 
 
@@ -34,14 +34,14 @@ $MainForm = New-Object System.Windows.Forms.Form
 $MainForm.Size = New-Object System.Drawing.Size(500,850)
 $MainForm.StartPosition = "CenterScreen"
 $Label1 = New-Object System.Windows.Forms.Label
-$Label1.Text = "Select System Environment Variable To Edit"
+$Label1.Text = "Select User Environment Variable To Edit"
 $Label1.Size = New-Object System.Drawing.Size(400,25)
 $Label1.Location = New-Object System.Drawing.Size(50,0)
 $listBox = New-Object System.Windows.Forms.ListBox
 $listBox.Size = New-Object System.Drawing.Size(400,350)
 $listBox.Location = New-Object System.Drawing.Size(50,25)
 $SetCurVarText = {
-    $CurrentValue.Text = [System.Environment]::GetEnvironmentVariable($listBox.SelectedItem)
+    $CurrentValue.Text = [System.Environment]::GetEnvironmentVariable($listBox.SelectedItem,"User")
 }
 $listBox.Add_Click($SetCurVarText)
 $SysVarsKeysList | ForEach-Object -Process {
@@ -73,7 +73,7 @@ $MainForm.Controls.Add($Label3)
 $MainForm.Controls.Add($NewValue)
 $MainForm.Controls.Add($Button)
 $UpdateVarScript = {
-    [System.Environment]::SetEnvironmentVariable($listBox.SelectedItem,$NewValue.Text,"Machine")
+    [System.Environment]::SetEnvironmentVariable($listBox.SelectedItem,$NewValue.Text,"User")
     $MainForm.Close()
 }
 $Button.add_Click($UpdateVarScript)

@@ -1,38 +1,39 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$VarClixml = Import-Clixml -Path "$PSScriptRoot\Export\Vars.xml"
-$CurDir = $VarClixml["CurrentDir"]
-$OpDir = $VarClixml["OppositeDir"]
+$OCVars = Import-Clixml -Path (Join-Path $PSScriptRoot "\Export\Vars.xml")
+$CurDir = $OCVars.CurrentDir
+$OpDir = $OCVars.OppositeDir
 
+$FolderPathDialog = New-Object System.Windows.Forms.FolderBrowserDialog
+$FolderPathDialog.Description = "Choose A Destination Path To Merge Both Panes Into"
+$FolderPathDialog.RootFolder = "MyComputer"
+$FolderPathDialog.SelectedPath = "$env:SystemDrive"
 
-$MainForm = New-Object System.Windows.Forms.Form
-$MainForm.Size = New-Object System.Drawing.Size(500,300)
+if ($FolderPathDialog.ShowDialog() -eq "OK") {
+    Copy-Item -Path "$CurDir\*" -Destination $FolderPathDialog.SelectedPath -Recurse -Force
+    Copy-Item -Path "$OpDir\*" -Destination $FolderPathDialog.SelectedPath -Recurse -Force
+}
+elseif ($FolderPathDialog.ShowDialog() -eq "CANCEL") {
+    $ButtonType = [System.Windows.Forms.MessageBoxButtons]::Ok
 
-$Label = New-Object System.Windows.Forms.Label
-$Label.Size = New-Object System.Drawing.Size(300,25)
-$Label.Location = New-Object System.Drawing.Size(100,0)
-$Label.Text = "Enter A Folder Path To Merge Directories To"
+$MessageIcon = [System.Windows.Forms.MessageBoxIcon]::Information
 
-$TextBox = New-Object System.Windows.Forms.TextBox
-$TextBox.Size = New-Object System.Drawing.Size(300,50)
-$TextBox.Location = New-Object System.Drawing.Size(100,25)
+$MessageBody = "You have canceled the Folder Picking Dialog. Ending Script."
 
-$Button = New-Object System.Windows.Forms.Button
-$Button.Size = New-Object System.Drawing.Size(100,50)
-$Button.Location = New-Object System.Drawing.Size(200,100)
-$DoItNow = {
-    $Folder = $TextBox.Text
-    if (Test-Path $Folder) {
-    Copy-Item -Path (Join-Path $CurDir *) -Destination $Folder -Recurse
-Copy-Item -Path (Join-Path $OpDir *) -Destination $Folder -Recurse}
+$MessageTitle = "Dialog Closed"
+
+[System.Windows.Forms.MessageBox]::Show($MessageBody,$MessageTitle,$ButtonType,$MessageIcon)
+}
 else {
-    
+    $ButtonType2 = [System.Windows.Forms.MessageBoxButtons]::Ok
+
+$MessageIcon2 = [System.Windows.Forms.MessageBoxIcon]::Warning
+
+$MessageBody2 = "An Unknown Error Occured. Ending Script."
+
+$MessageTitle2 = "Unknown Error"
+
+[System.Windows.Forms.MessageBox]::Show($MessageBody2,$MessageTitle2,$ButtonType2,$MessageIcon2)
 }
-}
-$Button.add_Click($DoItNow)
-$MainForm.Controls.Add($Label)
-$MainForm.Controls.Add($TextBox)
-$MainForm.Controls.Add($Button)
-$MainForm.ShowDialog()
 

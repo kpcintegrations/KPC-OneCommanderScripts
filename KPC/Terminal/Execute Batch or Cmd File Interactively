@@ -1,0 +1,2 @@
+#PS
+$SelectedFiles | ForEach-Object { wt cmd -NoProfile -Interactive -NoExit -File $_}
