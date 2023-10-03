@@ -9,6 +9,7 @@ $promptGuids = $wtContentObj.profiles.list.guid
 $promptNames = $wtContentObj.profiles.list.name
 
 Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
 
 $mainForm = New-Object System.Windows.Forms.Form
 $mainForm.Size = New-Object System.Drawing.Size(500,850)
