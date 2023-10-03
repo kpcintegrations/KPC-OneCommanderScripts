@@ -56,14 +56,14 @@ $Global:PushTheFiles = ""
 if ($OCVars.MultiSelection -ne "") {
     $Global:PushTheFiles = {
         $OCVars.MultiSelection | ForEach-Object {
-        & $adbPath -s $InputTextBox.SelectedItem push $_ ("/sdcard/" + $InputTextBox2.SelectedItem.ToString())
+        & $adbPath -s $InputTextBox.SelectedItem push $_ ("/sdcard/" + $InputTextBox2.SelectedItem)
     }
     $MainForm.Close()
 }
 }
 else {
 $Global:PushTheFiles = {
-    & $adbPath -s $InputTextBox.SelectedItem.Text push $OCVars.CurrentDir ('/sdcard/' + $InputTextBox2.SelectedItem.ToString())
+    & $adbPath -s $InputTextBox.SelectedItem.Text push $OCVars.CurrentDir ('/sdcard/' + $InputTextBox2.SelectedItem)
     $MainForm.Close()
 }
 }
