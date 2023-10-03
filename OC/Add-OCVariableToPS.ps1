@@ -76,6 +76,6 @@ $MessageTitle2 = "Replace Name"
 }
 }
 
-$okButton.add_Click($ButtonClickScript)
+$okButton.Add_Click($ButtonClickScript)
 
 $mainForm.ShowDialog()
