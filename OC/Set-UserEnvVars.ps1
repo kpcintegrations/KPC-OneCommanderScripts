@@ -31,7 +31,7 @@ $SysVarsKeysList = $SysEnvVars.Key
 
 
 $MainForm = New-Object System.Windows.Forms.Form
-$MainForm.Size = New-Object System.Drawing.Size(500,850)
+$MainForm.Size = New-Object System.Drawing.Size(500,800)
 $MainForm.StartPosition = "CenterScreen"
 $Label1 = New-Object System.Windows.Forms.Label
 $Label1.Text = "Select User Environment Variable To Edit"
@@ -54,6 +54,9 @@ $Label2.Location = New-Object System.Drawing.Size(50,375)
 $CurrentValue = New-Object System.Windows.Forms.TextBox
 $CurrentValue.Size = New-Object System.Drawing.Size(450,100)
 $CurrentValue.Location = New-Object System.Drawing.Size(25,400)
+$CurrentValue.AutoSize = $false
+$CurrentValue.WordWrap = $true
+$CurrentValue.Multiline = $true
 $Label3 = New-Object System.Windows.Forms.Label
 $Label3.Text = "Enter New Variable Value (Will Overwrite, Not Append)"
 $Label3.Size = New-Object System.Drawing.Size(400,25)
@@ -61,9 +64,12 @@ $Label3.Location = New-Object System.Drawing.Size(50,500)
 $NewValue = New-Object System.Windows.Forms.TextBox
 $NewValue.Size = New-Object System.Drawing.Size(450,100)
 $NewValue.Location = New-Object System.Drawing.Size(25,525)
+$NewValue.AutoSize = $false
+$NewValue.WordWrap = $true
+$NewValue.Multiline = $true
 $Button = New-Object System.Windows.Forms.Button
 $Button.Size = New-Object System.Drawing.Size(200,50)
-$Button.Location = New-Object System.Drawing.Size(150,625)
+$Button.Location = New-Object System.Drawing.Size(150,650)
 $Button.Text = "Update Variable"
 $MainForm.Controls.Add($Label1)
 $MainForm.Controls.Add($listBox)
