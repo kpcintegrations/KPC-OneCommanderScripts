@@ -1,7 +1,7 @@
 New-Item -Path $PSScriptRoot -Name 'Export' -ItemType 'Directory' -Force
 $Path = "$PSScriptRoot\Export\"
 $RawProfileContent = @'
-$CustomVariables = Import-Clixml -Path "$Path\CusVars.xml"
+$CustomVariables = Import-Clixml -Path "$Path\CusPSVars.xml"
 $CustomVariables.GetEnumerator() | ForEach-Object -Process { New-Variable -Name $_.Name -Value $_.Value -Option AllScope -Scope Global -Force }
 '@
 if (Test-Path $PROFILE) {
