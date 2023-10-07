@@ -88,7 +88,7 @@ if ($OCVars.MultiSelection -ne "") {
 }
 else {
 $Global:PushTheFiles = {
-    & $adbPath -s $InputTextBox.SelectedItem.Text push $OCVars.CurrentDir ('/sdcard/' + $InputTextBox2.SelectedItem)
+    & $adbPath -s $InputTextBox.SelectedItem.Text push "$($OCVars.CurrentDir)" ('/sdcard/' + $InputTextBox2.SelectedItem)
     $MainForm.Close()
 }
 }
