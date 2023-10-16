@@ -19,4 +19,4 @@ New-Item -Path $ParseOCPath -ItemType Directory -Force
 New-Item -Path $ParseParseOCPath -ItemType Directory -Force
     Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
     Copy-Item -Recurse -Path "$PSScriptRoot\OC\*" -Destination $ParseParseOCPath -Force
-    . "$ParseParseOCPath\Invoke-OCInit.ps1"
+    . "$ParseParseOCPath\Get-CorrectPowerShellVersion.ps1"
