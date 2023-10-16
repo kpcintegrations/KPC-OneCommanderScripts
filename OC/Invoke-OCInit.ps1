@@ -7,7 +7,7 @@ $CustomVariables.GetEnumerator() | ForEach-Object -Process { New-Variable -Name 
 '@
 $RawProfileParsed = $RawProfileContent.Replace('$Path',$Path)
 
-if (Test-Path $PROFILE) {
+$SB = {if (Test-Path $PROFILE) {
     if (!($ProfileContents.Contains($RawProfileParsed))) {
 Add-Content -Path $PROFILE -Value ""
 Add-Content -Path $PROFILE -Value $RawProfileParsed
@@ -19,6 +19,15 @@ else {
     Add-Content -Path $PROFILE -Value ""
 Add-Content -Path $PROFILE -Value $RawProfileParsed
     }
+}
+}
+
+if ($PSVersionTable["PSVersion"].Major -eq 5) {
+    Write-Host "Switching to PS 7"
+    & pwsh.exe -Command $SB
+}
+else {
+    Invoke-Command -ScriptBlock $SB
 }
 $VarHash = @{}
 $VarHash | Export-Clixml -Path "$Path\Vars.xml"
