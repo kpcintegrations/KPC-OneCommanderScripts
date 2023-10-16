@@ -8,7 +8,7 @@ $CustomVariables.GetEnumerator() | ForEach-Object -Process { New-Variable -Name 
 $RawProfileParsed = $RawProfileContent.Replace('$Path',$Path)
 
 if (Test-Path $PROFILE) {
-    if ($ProfileContents -notcontains $RawProfileParsed) {
+    if (!($ProfileContents.Contains($RawProfileParsed))) {
 Add-Content -Path $PROFILE -Value ""
 Add-Content -Path $PROFILE -Value $RawProfileParsed
     }
