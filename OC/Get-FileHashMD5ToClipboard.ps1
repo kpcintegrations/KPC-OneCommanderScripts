@@ -3,6 +3,11 @@ $SelectedFiles = $OCVars.MultiSelection
 $SelectedFiles | ForEach-Object -Process {
     $SelFileMD5Hash = Get-FileHash -LiteralPath $_ -Algorithm MD5
     $SplitPathLeaf = Split-Path -Path $_ -Leaf
-    Set-Clipboard -Value "$SplitPathLeaf - $($SelFileMD5Hash.Hash)"
+    if ($_.Count -gt 1) {
+        Set-Clipboard -Value "$SplitPathLeaf - $($SelFileMD5Hash.Hash)"
+    }
+    else {
+        Set-Clipboard -Value "$($SelFileMD5Hash.Hash)"
+    }
     Start-Sleep -Milliseconds 250
 }
