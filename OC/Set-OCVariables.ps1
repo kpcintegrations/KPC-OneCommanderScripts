@@ -12,7 +12,7 @@ param(
     [string]
     $OpDir
 )
-$SelMultList = ($SelMultiple -split "\n")
+$SelMultList = ($SelMultiple -split "\r?\n")
 
 $OCVarHash = @{
     CurrentDir     = $CurrentDir
