@@ -46,7 +46,7 @@ $DevicesAvaialable | ForEach-Object {
     $InputTextBox.Items.Add($_)
 }
 
-$adbPath = "$PSScriptRoot\platform-tools\adb.exe"
+$adbPath = "$PSScriptRoot\Tools\adb.exe"
 
 $MainForm.Controls.Add($InputTextBox)
 

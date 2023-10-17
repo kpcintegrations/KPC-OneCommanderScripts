@@ -1,4 +1,5 @@
 #PS
 $OCPath = (Get-Process OneCommander).Path
 $ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
+& pwsh -File (Join-Path $ParseOCPath 'Resources\KPC\Invoke-ADBInit.ps1')
 & pwsh -File (Join-Path $ParseOCPath 'Resources\KPC\Get-AndroidInstalledAppsInfo.ps1')
