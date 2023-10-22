@@ -24,6 +24,7 @@ else {
 $ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName + '\Resources\Scripts\'
 }
 $ParseParseOCPath = ($ParseOCPath | Join-Path -ChildPath "..\KPC\")
+taskkill.exe /IM "adb.exe" /F
 New-Item -Path $ParseOCPath -ItemType Directory -Force
 New-Item -Path $ParseParseOCPath -ItemType Directory -Force
     Copy-Item -Recurse -Path  "$PSScriptRoot\KPC\" -Destination $ParseOCPath -Force
