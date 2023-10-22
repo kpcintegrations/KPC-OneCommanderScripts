@@ -94,7 +94,7 @@ $progressLabel1.Size = New-Object System.Drawing.Size(200, 25)
 $progressLabel1.Location = New-Object System.Drawing.Size(50, 25)
 $progressLabel1.Text = "Apk Pulling Progress"
 $progressBar = New-Object System.Windows.Forms.ProgressBar
-$progressBar.Size = New-Object System.Drawing.Size(200, 25)
+$progressBar.AutoSize = $true
 $progressBar.Location = New-Object System.Drawing.Size(50, 75)
 $progressBar.Visible = $true
 $progressBar.Maximum = $ParsedADBPaths.Count
@@ -105,10 +105,9 @@ $progressLabel2.Size = New-Object System.Drawing.Size(200, 25)
 $progressLabel2.Location = New-Object System.Drawing.Size(50, 150)
 $progressLabel2.Text = "Apk Processing Progress"
 $progressBar2 = New-Object System.Windows.Forms.ProgressBar
-$progressBar2.Size = New-Object System.Drawing.Size(200, 25)
+$progressBar2.AutoSize = $true
 $progressBar2.Location = New-Object System.Drawing.Size(50, 200)
 $progressBar2.Visible = $true
-$progressBar2.Maximum = $ParsedADBPaths.Count
 $progressBar2.Minimum = 1
 $progressBar2.Value = 1
 $progressButton = New-Object System.Windows.Forms.Button
@@ -122,12 +121,14 @@ $progressBarSB = {
         $progressBar.Increment(1)
     }
     $GetApks = Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\" -File -Force
-    $CommonNames = @{}
+    $Global:CommonNames = @{}
+    $progressBar2.Maximum = $GetApks.Count
     foreach ($apk in $GetApks) {
         $Args4 = "dump", "badging", "$($apk.FullName)"
         $RawAAPT2Dump = & "$PSScriptRoot\Tools\aapt2.exe" @Args4
         $ParsedDump = $RawAAPT2Dump | Select-String "(?<=application-label:')[^']+" | ForEach-Object { $_.Matches.Value }
-        $CommonNames.Add($apk.BaseName, $ParsedDump)
+        $Global:CommonNames.Add($apk.BaseName, $ParsedDump)
+        $progressBar2.Increment(1)
     }
     $progressBarForm.Close()
 }
@@ -139,5 +140,5 @@ $progressBarForm.Controls.Add($progressLabel2)
 $progressBarForm.Controls.Add($progressButton)
 $progressBarForm.ShowDialog()
 
-$SortedApksByCommonName = $CommonNames.GetEnumerator() | Sort-Object -Property Value
+$SortedApksByCommonName = $Global:CommonNames.GetEnumerator() | Sort-Object -Property Value
 $SortedApksByCommonName | Out-GridView -Title "Apks & Names"
