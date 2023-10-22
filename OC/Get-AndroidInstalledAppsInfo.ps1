@@ -85,10 +85,31 @@ if (Test-Path "$PSScriptRoot\Export\ApkFiles\") {
     Remove-Item -Path "$PSScriptRoot\Export\ApkFiles\" -Recurse -Force
 }
 New-Item -Path "$PSScriptRoot\Export\ApkFiles\" -ItemType Directory -Force
-for ($i = 0; $i -lt $ParsedADBPaths.Count; $i++) {
-    $Args3 = "pull", "$($ParsedADBPaths[$i])", "$PSScriptRoot\Export\ApkFiles\$($ParsedADBPackageNames[$i]).apk"
-    & "$PSScriptRoot\Tools\adb.exe" @Args3
+$progressBarForm = New-Object System.Windows.Forms.Form
+$progressBarForm.Size = New-Object System.Drawing.Size(300,200)
+$progressBar = New-Object System.Windows.Forms.ProgressBar
+$progressBar.Size = New-Object System.Drawing.Size(200,25)
+$progressBar.Location = New-Object System.Drawing.Size(50,25)
+$progressBar.Visible = $true
+$progressBar.Maximum = $ParsedADBPaths.Count
+$progressBar.Minimum = 1
+$progressBar.Value = 1
+$progressButton = New-Object System.Windows.Forms.Button
+$progressButton.Size = New-Object System.Drawing.Size(100,25)
+$progressButton.Location = New-Object System.Drawing.Size(100,75)
+$progressButton.Text = "Start Apk Pull"
+$progressBarSB = {
+    for ($i = 0; $i -lt $ParsedADBPaths.Count; $i++) {
+        $Args3 = "pull", "$($ParsedADBPaths[$i])", "$PSScriptRoot\Export\ApkFiles\$($ParsedADBPackageNames[$i]).apk"
+        & "$PSScriptRoot\Tools\adb.exe" @Args3
+        $progressBar.Increment(1)
+    }
+    $progressBarForm.Close()
 }
+$progressButton.Add_Click($progressBarSB)
+$progressBarForm.Controls.Add($progressBar)
+$progressBarForm.Controls.Add($progressButton)
+$progressBarForm.ShowDialog()
 $GetApks = Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\" -File -Force
 $CommonNames = @{}
 foreach ($apk in $GetApks) {
