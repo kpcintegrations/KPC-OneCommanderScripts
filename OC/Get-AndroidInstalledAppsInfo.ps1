@@ -28,86 +28,86 @@ $mainForm.Text = "Get Package And Common Name Of Installed Apks"
 
 $label = New-Object System.Windows.Forms.Label
 $label.AutoSize = $true
-$label.Location = New-Object System.Drawing.Size(100,25)
+$label.Location = New-Object System.Drawing.Size(100, 25)
 $label.Text = "Select which packages to list"
 
 $checkbox1 = New-Object System.Windows.Forms.CheckBox
 $checkbox1.AutoSize = $true
-$checkbox1.Location = New-Object System.Drawing.Size(100,50)
+$checkbox1.Location = New-Object System.Drawing.Size(100, 50)
 $checkbox1.Text = "Third Party Packages"
 
 $checkbox2 = New-Object System.Windows.Forms.CheckBox
 $checkbox2.AutoSize = $true
-$checkbox2.Location = New-Object System.Drawing.Size(300,50)
+$checkbox2.Location = New-Object System.Drawing.Size(300, 50)
 $checkbox2.Text = "System Packages"
 
 $progressLabel1 = New-Object System.Windows.Forms.Label
 $progressLabel1.AutoSize = $true
-$progressLabel1.Location = New-Object System.Drawing.Size(100,100)
+$progressLabel1.Location = New-Object System.Drawing.Size(100, 100)
 $progressLabel1.Text = "Apk Pulling Progress"
 
 $progressBar = New-Object System.Windows.Forms.ProgressBar
 $progressBar.AutoSize = $true
-$progressBar.Location = New-Object System.Drawing.Size(100,150)
+$progressBar.Location = New-Object System.Drawing.Size(100, 150)
 $progressBar.Visible = $true
 $progressBar.Minimum = 1
 $progressBar.Value = 1
 
 $progressLabel2 = New-Object System.Windows.Forms.Label
 $progressLabel2.AutoSize = $true
-$progressLabel2.Location = New-Object System.Drawing.Size(300,100)
+$progressLabel2.Location = New-Object System.Drawing.Size(300, 100)
 $progressLabel2.Text = "Apk Processing Progress"
 
 $progressBar2 = New-Object System.Windows.Forms.ProgressBar
 $progressBar2.AutoSize = $true
-$progressBar2.Location = New-Object System.Drawing.Size(300,150)
+$progressBar2.Location = New-Object System.Drawing.Size(300, 150)
 $progressBar2.Visible = $true
 $progressBar2.Minimum = 1
 $progressBar2.Value = 1
 
 $button = New-Object System.Windows.Forms.Button
 $button.AutoSize = $true
-$button.Location = New-Object System.Drawing.Size(100,200)
+$button.Location = New-Object System.Drawing.Size(100, 200)
 $button.Text = "OK"
 
 $listBoxLabel = New-Object System.Windows.Forms.Label
 $listBoxLabel.AutoSize = $true
-$listBoxLabel.Location = New-Object System.Drawing.Size(100,250)
+$listBoxLabel.Location = New-Object System.Drawing.Size(100, 250)
 $listBoxLabel.Text = "Select Apps From Results:"
 
 $resultsListBox = New-Object System.Windows.Forms.ListBox
 $resultsListBox.AutoSize = $true
-$resultsListBox.Location = New-Object System.Drawing.Size(100,300)
+$resultsListBox.Location = New-Object System.Drawing.Size(100, 300)
 $resultsListBox.SelectionMode = "None"
 
 $rsultsListCheckBoxLabel = New-Object System.Windows.Forms.Label
 $rsultsListCheckBoxLabel.AutoSize = $true
-$rsultsListCheckBoxLabel.Location = New-Object System.Drawing.Size(100,800)
+$rsultsListCheckBoxLabel.Location = New-Object System.Drawing.Size(100, 800)
 $rsultsListCheckBoxLabel.Text = "Select Action(s) To Take"
 
 $resultsCheckBox1 = New-Object System.Windows.Forms.CheckBox
 $resultsCheckBox1.AutoSize = $true
-$resultsCheckBox1.Location = New-Object System.Drawing.Size(100,800)
+$resultsCheckBox1.Location = New-Object System.Drawing.Size(100, 800)
 $resultsCheckBox1.Text = "Uninstall"
 
 $resultsCheckBox2 = New-Object System.Windows.Forms.CheckBox
 $resultsCheckBox2.AutoSize = $true
-$resultsCheckBox2.Location = New-Object System.Drawing.Size(200,800)
+$resultsCheckBox2.Location = New-Object System.Drawing.Size(200, 800)
 $resultsCheckBox2.Text = "Save Apks To Selected Location"
 
 $resultsCheckBox3 = New-Object System.Windows.Forms.CheckBox
 $resultsCheckBox3.AutoSize = $true
-$resultsCheckBox3.Location = New-Object System.Drawing.Size(500,800)
+$resultsCheckBox3.Location = New-Object System.Drawing.Size(500, 800)
 $resultsCheckBox3.Text = "Clear Cache"
 
 $resultsCheckBox4 = New-Object System.Windows.Forms.CheckBox
 $resultsCheckBox4.AutoSize = $true
-$resultsCheckBox4.Location = New-Object System.Drawing.Size(700,800)
+$resultsCheckBox4.Location = New-Object System.Drawing.Size(700, 800)
 $resultsCheckBox4.Text = "Clear Data"
 
 $resultsButton = New-Object System.Windows.Forms.Button
 $resultsButton.AutoSize = $true
-$resultsButton.Location = New-Object System.Drawing.Size(100,850)
+$resultsButton.Location = New-Object System.Drawing.Size(100, 850)
 $resultsButton.Text = "Clear Data"
 
 $buttonSB = {
@@ -151,36 +151,37 @@ $buttonSB = {
         $progressBar2.Increment(1)
     }
     $SortedApksByCommonName = $CommonNames.GetEnumerator() | Sort-Object -Property Value
-    $Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
+    $Global:Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
     
 
-foreach ($result in $Results) {
-    $resultsListBox.Items.Add($result.Value)
-}
+    foreach ($result in $Global:Results) {
+        $resultsListBox.Items.Add($result.Value)
+    }
 }
 $resultButtonSB = {
-    $SaveFileDialog = New-Object System.Windows.Forms.SaveFileDialog
-    $SaveFileDialog.InitialDirectory = $Env:USERPROFILE
-    $SaveFileDialog.DefaultExt = ".apk"
-    if ($resultsCheckBox1.Checked) {
-        $uninstallArgs = "uninstall", "$($result.Key)"
-        & "$PSScriptRoot\Tools\adb.exe" @uninstallArgs
-    }
-    if ($resultsCheckBox2.Checked) {
-        if ($SaveFileDialog.ShowDialog() -eq "OK") {
-            $SavedFile = $SaveFileDialog.FileName
-            Copy-Item -Path (Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\" -Name "$($result.Key).apk").FullName -Destination $SavedFile
+    $SelectFolder = New-Object System.Windows.Forms.FolderBrowserDialog
+    foreach ($result in $Global:Results) {
+        if ($resultsCheckBox1.Checked) {
+            $uninstallArgs = "uninstall", "$($result.Key)"
+            & "$PSScriptRoot\Tools\adb.exe" @uninstallArgs
+        }
+        if ($resultsCheckBox2.Checked) {
+            if ($SelectFolder.ShowDialog() -eq "OK") {
+                $selectedFolder = $SelectFolder.SelectedPath   
+                Copy-Item -Path (Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\$($result.Key).apk").FullName -Destination $selectedFolder
+            }
+        }
+        if ($resultsCheckBox3.Checked) {
+            $cacheArgs = '-d', 'shell', 'pm', 'clear', '--cache-only', "$($result.Key)"
+            & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
+        }
+        if ($resultsCheckBox4) {
+            $cacheArgs = '-d', 'shell', 'pm', 'clear', "$($result.Key)"
+            & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
         }
     }
-    if ($resultsCheckBox3.Checked) {
-        $cacheArgs = '-d','shell','pm','clear','--cache-only'
-        & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
-    }
-    if ($resultsCheckBox4) {
-        $cacheArgs = '-d','shell','pm','clear'
-    }
     $mainForm.Close()
-    }
+}
 
 $button.Add_Click($buttonSB)
 $resultsButton.Add_Click($resultButtonSB)

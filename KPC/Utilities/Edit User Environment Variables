@@ -1,12 +1,12 @@
 #PS
 $OCPath = (Get-Process OneCommander).Path
 if ($OCPath.Contains('WindowsApp')) {
-    $ParseOCPath = (Join-Path $Env:USERPROFILE '\OneCommander\Resources\Scripts\')
+    $ParseOCPath = (Join-Path $Env:USERPROFILE '\OneCommander\')
 }
 elseif ($OCPath.Contains('Program Files')) {
-    $ParseOCPath = (Join-Path $Env:LOCALAPPDATA '\OneCommander\Resources\Scripts\')
+    $ParseOCPath = (Join-Path $Env:LOCALAPPDATA '\OneCommander\')
 }
 else {
-$ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName + '\Resources\Scripts\'
+$ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
 }
 & pwsh -File (Join-Path $ParseOCPath 'Resources\KPC\Set-UserEnvVars.ps1')
