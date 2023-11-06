@@ -16,8 +16,8 @@ $SelMultList = ($SelMultiple -split "\r?\n")
 
 $OCVarHash = @{
     CurrentDir     = $CurrentDir
-    MultiSelection = $SelMultList
-    OppositeDir    = $OpDir
+    SelectedFiles = $SelMultList
+    OpDir    = $OpDir
 }
 $OCVarHash | Export-Clixml -Path "$PSScriptRoot\Export\Vars.xml" -Force
 

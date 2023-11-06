@@ -1,5 +1,5 @@
 $OCVars = Import-Clixml -Path ($PSScriptRoot + "\Export\Vars.xml")
-$SelectedFiles = $OCVars.MultiSelection
+$SelectedFiles = $OCVars.SelectedFiles
 $SelectedFiles | ForEach-Object -Process {
     $SelFileMD5Hash = Get-FileHash -LiteralPath $_ -Algorithm MD5
     $SplitPathLeaf = Split-Path -Path $_ -Leaf

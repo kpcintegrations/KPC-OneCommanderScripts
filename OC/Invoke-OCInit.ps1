@@ -19,5 +19,3 @@ else {
 Add-Content -Path $PROFILE -Value $RawProfileParsed
     }
 }
-$VarHash = @{}
-$VarHash | Export-Clixml -Path "$Path\Vars.xml"

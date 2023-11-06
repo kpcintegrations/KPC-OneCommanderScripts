@@ -78,9 +78,9 @@ $PushButton.Location = New-Object System.Drawing.Size(200,500)
 $MainForm.Controls.Add($PushButton)
 
 $Global:PushTheFiles = ""
-if ($OCVars.MultiSelection -ne "") {
+if ($OCVars.SelectedFiles -ne "") {
     $Global:PushTheFiles = {
-        $OCVars.MultiSelection | ForEach-Object {
+        $OCVars.SelectedFiles | ForEach-Object {
         & $adbPath -s $InputTextBox.SelectedItem push $_ ("/sdcard/" + $InputTextBox2.SelectedItem)
     }
     $MainForm.Close()

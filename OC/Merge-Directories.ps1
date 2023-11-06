@@ -3,7 +3,7 @@ Add-Type -AssemblyName System.Drawing
 
 $OCVars = Import-Clixml -Path (Join-Path $PSScriptRoot "\Export\Vars.xml")
 $CurDir = $OCVars.CurrentDir
-$OpDir = $OCVars.OppositeDir
+$OpDir = $OCVars.OpDir
 
 $FolderPathDialog = New-Object System.Windows.Forms.FolderBrowserDialog
 $FolderPathDialog.Description = "Choose A Destination Path To Merge Both Panes Into"

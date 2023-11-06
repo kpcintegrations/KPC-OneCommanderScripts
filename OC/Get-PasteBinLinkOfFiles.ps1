@@ -67,7 +67,7 @@ $mainForm.ShowDialog()
 
 $OCVars = Import-Clixml -Path ($PSScriptRoot + "\Export\Vars.xml")
 $CurrentDir = $OCVars.CurrentDir
-$SelectedFiles = $OCVars.MultiSelection
+$SelectedFiles = $OCVars.SelectedFiles
 $FilesInCurDir = Get-ChildItem -Path $CurrentDir -File -Force
 $FilesNames = $FilesInCurDir.Name -join "`n"
 if($SelectedFiles -ne ""){
