@@ -1,25 +1,19 @@
 using namespace System.Windows.Forms
 using namespace System.Drawing
-using namespace System.Data
-using namespace System.Collections
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName System.Data
-Add-Type -AssemblyName System.Collections
 
 $OCVars = Import-Clixml -Path "$PSScriptRoot\Export\Vars.xml"
 $CurDir = $OCVars.CurrentDir
-$OpDir = $OCVars.OppositeDir
-$SelectedItems = $OCVars.SelectedItems
+$OpDir = $OCVars.OpDir
+$SelectedItems = $OCVars.SelectedFiles
 
 $DefaultFont =  [FontDialog]::new()
 $DefaultFont.ShowDialog()
 
-Start-Sleep -Milliseconds 50
-
 $Global:CurFolPath = "/sdcard/"
-$adbInitFolders = adb shell ls $Global:CurFolPath
+$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Global:CurFolPath)"
 
 $form = [Form]::new()
 $form.Size = [Size]::new(1000,900)
@@ -27,8 +21,8 @@ $form.BackColor = [Color]::White
 $form.StartPosition = [FormStartPosition]::CenterScreen
 $form.Font = $DefaultFont.Font
 
-$page1MenuButton1Image = [Image]::FromFile("C:\Users\kylep\Downloads\upload-64.png")
-$page1MenuButton2Image = [Image]::FromFile("C:\Users\kylep\Downloads\check-mark-8-64.png")
+$page1MenuButton1Image = [Image]::FromFile("$PSScriptRoot\Assests\uparrow.png")
+$page1MenuButton2Image = [Image]::FromFile("$PSScriptRoot\Assests\checkbox.png")
 
 $page1MenuButton1 = [Button]::new()
 $page1MenuButton1.Size = [Size]::new(50,50)
@@ -45,6 +39,9 @@ $page1Panel.Dock = [DockStyle]::Fill
 $page2Panel = [Panel]::new()
 $page2Panel.Dock = [DockStyle]::Fill
 
+$page3Panel = [Panel]::new()
+$page3Panel.Dock = [DockStyle]::Fill
+
 $page1MenuPanel = [Panel]::new()
 $page1MenuPanel.Dock = "Top"
 $page1MenuPanel.Height = 50
@@ -56,8 +53,8 @@ $page1MenuPanel.Controls.Add($page1MenuButton2)
 
 
 $lvImageList = [ImageList]::new()
-$lvImageList.Images.Add([Image]::FromFile("E:\Cloud Drives\OneDrive\Pictures\WinCustomIconFiles\SourceImages\defaultfolder.png"))
-$lvImageList.Images.Add([Image]::FromFile("C:\Users\kylep\Downloads\document-64.png"))
+$lvImageList.Images.Add([Image]::FromFile("$PSScriptRoot\Assests\folder.png"))
+$lvImageList.Images.Add([Image]::FromFile("$PSScriptRoot\Assests\file.png"))
 $lvImageList.ImageSize = [Size]::new(50,50)
 
 $listView = [ListView]::new()
@@ -108,6 +105,11 @@ $mainMenuButton2.MinimumSize = [Size]::new(200,50)
 $mainMenuButton2.Location = [Point]::new(0,50)
 $mainMenuButton2.Text = "Install Apk(s)"
 
+$mainMenuButton3 = [Button]::new()
+$mainMenuButton3.MinimumSize = [Size]::new(200,50)
+$mainMenuButton3.Location = [Point]::new(0,100)
+$mainMenuButton3.Text = "Get Apk Common Names"
+
 $mainMenu = [Panel]::new()
 $mainMenu.Margin = [Padding]::new(0,0,5,0)
 $mainMenu.Dock = "Left"
@@ -115,6 +117,7 @@ $mainMenu.BackColor = [Color]::Black
 $mainMenu.ForeColor = [Color]::White
 $mainMenu.Controls.Add($mainMenuButton1)
 $mainMenu.Controls.Add($mainMenuButton2)
+$mainMenu.Controls.Add($mainMenuButton3)
 
 $page1BottomButton1 = [Button]::new()
 $page1BottomButton1.Dock = "Top"
@@ -128,6 +131,10 @@ $page1BottomButton3 = [Button]::new()
 $page1BottomButton3.Dock = "Top"
 $page1BottomButton3.Text = "Transfer To Opposite Directory"
 
+$page1BottomButton4 = [Button]::new()
+$page1BottomButton4.Dock = "Top"
+$page1BottomButton4.Text = "Transfer Selected Files To Open Phone Directory"
+
 $page1BottomButton1.Add_Click(
     {
         $fbd = [FolderBrowserDialog]::new()
@@ -135,10 +142,10 @@ $page1BottomButton1.Add_Click(
         Start-Sleep -Milliseconds 50
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & adb pull ($Global:CurFolPath + $_) $fbd.SelectedPath
+              & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_) $fbd.SelectedPath
             }
             else {
-                & adb pull ($Global:CurFolPath + $_ + "/") $fbd.SelectedPath
+                & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_ + "/") $fbd.SelectedPath
             }
         }
         Start-Sleep -Milliseconds 50
@@ -150,10 +157,10 @@ $page1BottomButton2.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & adb pull ($Global:CurFolPath + $_) $CurDir
+              & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_) $CurDir
             }
             else {
-                & adb pull ($Global:CurFolPath + $_ + "/") $CurDir
+                & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_ + "/") $CurDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -165,10 +172,10 @@ $page1BottomButton3.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & adb pull ($Global:CurFolPath + $_) $OpDir
+              & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_) $OpDir
             }
             else {
-                & adb pull ($Global:CurFolPath + $_ + "/") $OpDir
+                & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_ + "/") $OpDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -179,7 +186,7 @@ $page1BottomButton3.Add_Click(
 $page1BottomButton4.Add_Click(
     {
         $SelectedItems | ForEach-Object -Process {
-            & adb push $_ ($Global:CurFolPath + $_ + "/")
+            & "$PSScriptRoot\Tools\adb.exe" push $_ ($Global:CurFolPath + $_ + "/")
             }
         Start-Sleep -Milliseconds 50
             [MessageBox]::Show("All Files Have Transfered Successfully","Sucess!","Ok")
@@ -193,6 +200,7 @@ $page1BottomPanel.AutoSize = $true
 $page1BottomPanel.Controls.Add($page1BottomButton1)
 $page1BottomPanel.Controls.Add($page1BottomButton2)
 $page1BottomPanel.Controls.Add($page1BottomButton3)
+$page1BottomPanel.Controls.Add($page1BottomButton4)
 
 
 $page1Panel.Controls.Add($listViewWrapperPanel)
@@ -239,7 +247,7 @@ $page1MenuButton1.Add_Click(
             $TempList = $Global:PrePath | Split-String -Separator "/" -RemoveEmptyStrings
             $RepText = $TempList[-1]
             $Global:PrePath = ($Global:PrePath).Replace("$RepText/","")
-            $Items = adb shell ls $Global:PrePath
+            $Items = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Global:PrePath)"
             $Global:CurFolPath = $Global:PrePath
             $ListView.Clear()
             foreach ($Item in $Items) {
@@ -293,7 +301,7 @@ $page2Button1.Add_Click(
 $page2BottomPanelButton.Add_Click(
     {
         foreach ($FileName in $page2FileSelectDialog.FileNames) {
-            & adb install $FileName
+            & "$PSScriptRoot\Tools\adb.exe" install $FileName
         }
         [MessageBox]::Show("Apk(s) Sucessfully Installed","Sucess!","Ok")
         $page2ListBoxSelectedFiles.Items.Clear()
