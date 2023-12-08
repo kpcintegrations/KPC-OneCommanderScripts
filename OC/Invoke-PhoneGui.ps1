@@ -186,7 +186,7 @@ $page1BottomButton3.Add_Click(
 $page1BottomButton4.Add_Click(
     {
         $SelectedItems | ForEach-Object -Process {
-            & "$PSScriptRoot\Tools\adb.exe" push $_ ($Global:CurFolPath + $_ + "/")
+            & "$PSScriptRoot\Tools\adb.exe" push $_ ($Global:CurFolPath + "/")
             }
         Start-Sleep -Milliseconds 50
             [MessageBox]::Show("All Files Have Transfered Successfully","Sucess!","Ok")
