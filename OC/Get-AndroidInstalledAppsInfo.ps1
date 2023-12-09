@@ -1,27 +1,9 @@
+using namespace System.Windows.Forms
+using namespace System.Drawing
 Add-Type -AssemblyName System.Windows.Forms
-Add-Type -TypeDefinition '
-using System;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
+Add-Type -AssemblyName System.Drawing
 
-public class DPIAware {
-    public static readonly IntPtr UNAWARE              = (IntPtr) (-1);
-    public static readonly IntPtr SYSTEM_AWARE         = (IntPtr) (-2);
-    public static readonly IntPtr PER_MONITOR_AWARE    = (IntPtr) (-3);
-    public static readonly IntPtr PER_MONITOR_AWARE_V2 = (IntPtr) (-4);
-    public static readonly IntPtr UNAWARE_GDISCALED    = (IntPtr) (-5);
-
-    [DllImport("user32.dll", EntryPoint = "SetProcessDpiAwarenessContext", SetLastError = true)]
-    private static extern bool NativeSetProcessDpiAwarenessContext(IntPtr Value);
-
-    public static void SetProcessDpiAwarenessContext(IntPtr Value) {
-        if (!NativeSetProcessDpiAwarenessContext(Value)) {
-            throw new Win32Exception();
-        }
-    }
-}
-'
-$mainForm = New-Object System.Windows.Forms.Form
+$mainForm = New-Object Form
 $mainForm.AutoSize = $true
 $mainForm.StartPosition = "CenterScreen"
 $mainForm.Text = "Get Package And Common Name Of Installed Apks"

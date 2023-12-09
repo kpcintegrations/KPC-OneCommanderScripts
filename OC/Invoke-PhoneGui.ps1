@@ -233,7 +233,6 @@ $page2ListBoxSelectedFiles.Height = 700
 $page2FileSelectDialog = [OpenFileDialog]::new()
 $page2FileSelectDialog.Multiselect = $true
 
-
 $page2Panel.Controls.Add($page2ListBoxSelectedFiles)
 $page2Panel.Controls.Add($page2Button1)
 $page2Panel.Controls.Add($page2BottomPanel)
@@ -325,6 +324,199 @@ $mainMenuButton2.Add_Click(
         $form.Controls.Add($mainMenu)
     }
 )
+
+$mainMenuButton3.Add_Click(
+    {
+        $form.Controls.Clear()
+        Start-Sleep -Milliseconds 50
+        $form.Controls.Add($page3Panel)
+        $form.Controls.Add($mainMenu)
+    }
+)
+
+$label = [Label]::new()
+$label.AutoSize = $true
+$label.Location =[Point]::new(100,25)
+$label.Text = "Select which packages to list"
+
+$checkbox1 = [CheckBox]::new()
+$checkbox1.AutoSize = $true
+$checkbox1.Location = [Point]::new(100, 50)
+$checkbox1.Text = "Third Party Packages"
+
+$checkbox2 = [CheckBox]::new()
+$checkbox2.AutoSize = $true
+$checkbox2.Location = [Point]::new(300, 50)
+$checkbox2.Text = "System Packages"
+
+$progressLabel1 = [Label]::new()
+$progressLabel1.AutoSize = $true
+$progressLabel1.Location = [Point]::new(100, 100)
+$progressLabel1.Text = "Apk Pulling Progress"
+
+$progressBar = [ProgressBar]::new()
+$progressBar.AutoSize = $true
+$progressBar.Location = [Point]::new(100, 150)
+$progressBar.Visible = $true
+$progressBar.Minimum = 1
+$progressBar.Value = 1
+
+$progressLabel2 = [Label]::new()
+$progressLabel2.AutoSize = $true
+$progressLabel2.Location = [Point]::new(300, 100)
+$progressLabel2.Text = "Apk Processing Progress"
+
+$progressBar2 = [ProgressBar]::new()
+$progressBar2.AutoSize = $true
+$progressBar2.Location = [Point]::new(300, 150)
+$progressBar2.Visible = $true
+$progressBar2.Minimum = 1
+$progressBar2.Value = 1
+
+$button = [Button]::new()
+$button.AutoSize = $true
+$button.Location = [Point]::new(100, 200)
+$button.Text = "OK"
+
+$listBoxLabel = [Label]::new()
+$listBoxLabel.AutoSize = $true
+$listBoxLabel.Location = [Point]::new(100, 250)
+$listBoxLabel.Text = "Select Apps From Results:"
+
+$resultsListBox = [ListBox]::new()
+$resultsListBox.AutoSize = $true
+$resultsListBox.Location = [Point]::new(100, 300)
+$resultsListBox.SelectionMode = "None"
+
+$rsultsListCheckBoxLabel = [Label]::new()
+$rsultsListCheckBoxLabel.AutoSize = $true
+$rsultsListCheckBoxLabel.Location = [Point]::new(100, 800)
+$rsultsListCheckBoxLabel.Text = "Select Action(s) To Take"
+
+$resultsCheckBox1 = [CheckBox]::new()
+$resultsCheckBox1.AutoSize = $true
+$resultsCheckBox1.Location = [Point]::new(100, 800)
+$resultsCheckBox1.Text = "Uninstall"
+
+$resultsCheckBox2 = [CheckBox]::new()
+$resultsCheckBox2.AutoSize = $true
+$resultsCheckBox2.Location = [Point]::new(200, 800)
+$resultsCheckBox2.Text = "Save Apks To Selected Location"
+
+$resultsCheckBox3 = [CheckBox]::new()
+$resultsCheckBox3.AutoSize = $true
+$resultsCheckBox3.Location = [Point]::new(500, 800)
+$resultsCheckBox3.Text = "Clear Cache"
+
+$resultsCheckBox4 = [CheckBox]::new()
+$resultsCheckBox4.AutoSize = $true
+$resultsCheckBox4.Location = [Point]::new(700, 800)
+$resultsCheckBox4.Text = "Clear Data"
+
+$resultsButton = [Button]::new()
+$resultsButton.AutoSize = $true
+$resultsButton.Location = [Point]::new(100, 850)
+$resultsButton.Text = "Clear Data"
+
+
+
+
+$button.Add_Click(
+    {
+        $Global:Args1 = @()
+        if ($checkbox1.Checked -and $checkbox2.Checked) {
+            $Global:Args1 = "shell", "pm", "list", "packages", "-a", "-f"
+        }
+        if ($checkbox1.Checked -and !($checkbox2.Checked)) {
+            $Global:Args1 = "shell", "pm", "list", "packages", "-3", "-f"
+        }
+        if (!($checkbox1.Checked) -and $checkbox2.Checked) {
+            $Global:Args1 = "shell", "pm", "list", "packages", "-s", "-f"
+        }
+        $NewLineSplitPackages = & "$PSScriptRoot\Tools\adb.exe" @Args1
+        $ParsedADBPaths = @()
+        $ParsedADBPackageNames = @()
+        foreach ($line in $NewLineSplitPackages) {
+            $ParsedPath1 = ($line -replace '^package:' -replace '(?<=base\.apk).*')
+            $PackageName = ($line -split "=")[-1].ToString()
+            $ParsedADBPaths += $ParsedPath1
+            $ParsedADBPackageNames += $PackageName
+        }
+        $progressBar.Maximum = $ParsedADBPaths.Count
+        if (Test-Path "$PSScriptRoot\Export\ApkFiles\") {
+            Remove-Item -Path "$PSScriptRoot\Export\ApkFiles\" -Recurse -Force
+        }
+        New-Item -Path "$PSScriptRoot\Export\ApkFiles\" -ItemType Directory -Force
+        for ($i = 0; $i -lt $ParsedADBPaths.Count; $i++) {
+            $Args2 = "pull", "$($ParsedADBPaths[$i])", "$PSScriptRoot\Export\ApkFiles\$($ParsedADBPackageNames[$i]).apk"
+            & "$PSScriptRoot\Tools\adb.exe" @Args2
+            $progressBar.Increment(1)
+        }
+        $GetApks = Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\" -File -Force
+        $CommonNames = @{}
+        $progressBar2.Maximum = $GetApks.Count
+        foreach ($apk in $GetApks) {
+            $Args3 = "dump", "badging", "$($apk.FullName)"
+            $RawAAPT2Dump = & "$PSScriptRoot\Tools\aapt2.exe" @Args3
+            $ParsedDump = $RawAAPT2Dump | Select-String "(?<=application-label:')[^']+" | ForEach-Object { $_.Matches.Value }
+            $CommonNames.Add($apk.BaseName, $ParsedDump)
+            $progressBar2.Increment(1)
+        }
+        Write-Host "Here 1"
+        $SortedApksByCommonName = $CommonNames.GetEnumerator() | Sort-Object -Property Value
+        Write-Host "Here 2"
+        $Global:Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
+        Write-Host "Here 3"
+        
+    
+        foreach ($result in $Global:Results) {
+            Write-Host "Here 4"
+            $resultsListBox.Items.Add($result.Value)
+        }
+    }
+)
+$resultsButton.Add_Click(
+    {
+        $SelectFolder = [FolderBrowserDialog]::new()
+        foreach ($result in $Global:Results) {
+            if ($resultsCheckBox1.Checked) {
+                Write-Host "$($result.Key)"
+                $uninstallArgs = "uninstall", "$($result.Key)"
+                & "$PSScriptRoot\Tools\adb.exe" @uninstallArgs
+            }
+            if ($resultsCheckBox2.Checked) {
+                if ($SelectFolder.ShowDialog() -eq "OK") {
+                    $selectedFolder = $SelectFolder.SelectedPath   
+                    Copy-Item -Path (Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\$($result.Key).apk").FullName -Destination $selectedFolder
+                }
+            }
+            if ($resultsCheckBox3.Checked) {
+                $cacheArgs = '-d', 'shell', 'pm', 'clear', '--cache-only', "$($result.Key)"
+                & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
+            }
+            if ($resultsCheckBox4) {
+                $cacheArgs = '-d', 'shell', 'pm', 'clear', "$($result.Key)"
+                & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
+            }
+        }
+    }
+)
+
+$page3Panel.Controls.Add($label)
+$page3Panel.Controls.Add($checkbox1)
+$page3Panel.Controls.Add($checkbox2)
+$page3Panel.Controls.Add($progressLabel1)
+$page3Panel.Controls.Add($progressLabel2)
+$page3Panel.Controls.Add($progressBar)
+$page3Panel.Controls.Add($progressBar2)
+$page3Panel.Controls.Add($button)
+$page3Panel.Controls.Add($listBoxLabel)
+$page3Panel.Controls.Add($resultsListBox)
+$page3Panel.Controls.Add($resultsCheckBox1)
+$page3Panel.Controls.Add($resultsCheckBox2)
+$page3Panel.Controls.Add($resultsCheckBox3)
+$page3Panel.Controls.Add($resultsCheckBox4)
+$page3Panel.Controls.Add($resultsButton)
 
 $form.Controls.Add($page1Panel)
 $form.Controls.Add($mainMenu)

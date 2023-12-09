@@ -9,5 +9,5 @@ elseif ($OCPath.Contains('Program Files')) {
 else {
 $ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
 }
-& pwsh -File (Join-Path $ParseOCPath 'Resources\KPC\Invoke-ADBInit.ps1')
-& pwsh -File (Join-Path $ParseOCPath 'Resources\KPC\Get-AndroidInstalledAppsInfo.ps1')
+&  (Join-Path $ParseOCPath 'Resources\KPC\Invoke-ADBInit.ps1')
+&  (Join-Path $ParseOCPath 'Resources\KPC\Get-AndroidInstalledAppsInfo.ps1')
