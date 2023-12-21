@@ -1,4 +1,4 @@
-New-Item -Path "$PSScriptRoot\Export\" -ItemType Directory
+New-Item -Path "$PSScriptRoot\Export\" -ItemType Directory -Force
 $Path = "$PSScriptRoot\Export\"
 $ProfileContents = Get-Content -Path $PROFILE -Raw
 $RawProfileContent = @'
