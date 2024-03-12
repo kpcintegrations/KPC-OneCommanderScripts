@@ -12,8 +12,8 @@ $SelectedItems = $OCVars.SelectedFiles
 $DefaultFont =  [FontDialog]::new()
 $DefaultFont.ShowDialog()
 
-$Global:CurFolPath = "/sdcard/"
-$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Global:CurFolPath)"
+$Script:CurFolPath = "/sdcard/"
+$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Script:CurFolPath)"
 
 $form = [Form]::new()
 $form.Size = [Size]::new(1000,900)
@@ -22,16 +22,10 @@ $form.StartPosition = [FormStartPosition]::CenterScreen
 $form.Font = $DefaultFont.Font
 
 $page1MenuButton1Image = [Image]::FromFile("$PSScriptRoot\Assests\uparrow.png")
-$page1MenuButton2Image = [Image]::FromFile("$PSScriptRoot\Assests\checkbox.png")
 
 $page1MenuButton1 = [Button]::new()
 $page1MenuButton1.Size = [Size]::new(50,50)
 $page1MenuButton1.Image = $page1MenuButton1Image
-
-$page1MenuButton2 = [Button]::new()
-$page1MenuButton2.Size = [Size]::new(50,50)
-$page1MenuButton2.Location = [Point]::new(50,0)
-$page1MenuButton2.Image = $page1MenuButton2Image
 
 $page1Panel = [Panel]::new()
 $page1Panel.Dock = [DockStyle]::Fill
@@ -49,7 +43,6 @@ $page1MenuPanel.BackColor = [Color]::Black
 $page1MenuPanel.Padding = [Padding]::new(0)
 $page1MenuPanel.Margin = [Padding]::new(0)
 $page1MenuPanel.Controls.Add($page1MenuButton1)
-$page1MenuPanel.Controls.Add($page1MenuButton2)
 
 
 $lvImageList = [ImageList]::new()
@@ -72,8 +65,8 @@ $listView.Add_DoubleClick({
     Write-Host "In The DoubleClick"
     Write-Host "$($listView.SelectedItems[0].Text)"
     $Folder = $listView.SelectedItems[0].Text
-    $Global:CurFolPath = $Global:CurFolPath + $Folder + "/"
-    $Items = adb shell ls $Global:CurFolPath
+    $Script:CurFolPath = $Script:CurFolPath + $Folder + "/"
+    $Items = adb shell ls $Script:CurFolPath
     $listView.Clear()
     foreach ($Item in $Items) {
         if (!($Item -like "*.*")) {
@@ -142,10 +135,10 @@ $page1BottomButton1.Add_Click(
         Start-Sleep -Milliseconds 50
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_) $fbd.SelectedPath
+              & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_) $fbd.SelectedPath
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_ + "/") $fbd.SelectedPath
+                & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_ + "/") $fbd.SelectedPath
             }
         }
         Start-Sleep -Milliseconds 50
@@ -157,10 +150,10 @@ $page1BottomButton2.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_) $CurDir
+              & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_) $CurDir
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_ + "/") $CurDir
+                & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_ + "/") $CurDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -172,10 +165,10 @@ $page1BottomButton3.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_) $OpDir
+              & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_) $OpDir
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" pull ($Global:CurFolPath + $_ + "/") $OpDir
+                & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_ + "/") $OpDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -186,7 +179,7 @@ $page1BottomButton3.Add_Click(
 $page1BottomButton4.Add_Click(
     {
         $SelectedItems | ForEach-Object -Process {
-            & "$PSScriptRoot\Tools\adb.exe" push $_ ($Global:CurFolPath + "/")
+            & "$PSScriptRoot\Tools\adb.exe" push $_ ($Script:CurFolPath + "/")
             }
         Start-Sleep -Milliseconds 50
             [MessageBox]::Show("All Files Have Transfered Successfully","Sucess!","Ok")
@@ -241,13 +234,13 @@ $page2Panel.Controls.Add($page2BottomPanel)
 
 $page1MenuButton1.Add_Click(
     {
-            $Global:PrePath = $Global:CurFolPath
-            if ($Global:PrePath -ne "/sdcard/") {
-            $TempList = $Global:PrePath | Split-String -Separator "/" -RemoveEmptyStrings
+            $Script:PrePath = $Script:CurFolPath
+            if ($Script:PrePath -ne "/sdcard/") {
+            $TempList = $Script:PrePath.Split('/', [StringSplitOptions]::RemoveEmptyEntries)
             $RepText = $TempList[-1]
-            $Global:PrePath = ($Global:PrePath).Replace("$RepText/","")
-            $Items = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Global:PrePath)"
-            $Global:CurFolPath = $Global:PrePath
+            $Script:PrePath = ($Script:PrePath).Replace("$RepText/","")
+            $Items = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Script:PrePath)"
+            $Script:CurFolPath = $Script:PrePath
             $ListView.Clear()
             foreach ($Item in $Items) {
                 if (!($Item -like "*.*")) {
@@ -265,17 +258,6 @@ $page1MenuButton1.Add_Click(
             else {
                 [MessageBox]::Show("You are already at top level!","No Further To Go!",[MessageBoxButtons]::OK)
             }
-    }
-)
-
-$page1MenuButton2.Add_Click(
-    {
-        if ($listView.CheckBoxes -eq $true){
-            $listView.CheckBoxes = $false
-        }
-        else {
-            $listView.CheckBoxes = $true
-        }
     }
 )
 
@@ -423,15 +405,15 @@ $resultsButton.Text = "Clear Data"
 
 $button.Add_Click(
     {
-        $Global:Args1 = @()
+        $Script:Args1 = @()
         if ($checkbox1.Checked -and $checkbox2.Checked) {
-            $Global:Args1 = "shell", "pm", "list", "packages", "-a", "-f"
+            $Script:Args1 = "shell", "pm", "list", "packages", "-a", "-f"
         }
         if ($checkbox1.Checked -and !($checkbox2.Checked)) {
-            $Global:Args1 = "shell", "pm", "list", "packages", "-3", "-f"
+            $Script:Args1 = "shell", "pm", "list", "packages", "-3", "-f"
         }
         if (!($checkbox1.Checked) -and $checkbox2.Checked) {
-            $Global:Args1 = "shell", "pm", "list", "packages", "-s", "-f"
+            $Script:Args1 = "shell", "pm", "list", "packages", "-s", "-f"
         }
         $NewLineSplitPackages = & "$PSScriptRoot\Tools\adb.exe" @Args1
         $ParsedADBPaths = @()
@@ -465,11 +447,11 @@ $button.Add_Click(
         Write-Host "Here 1"
         $SortedApksByCommonName = $CommonNames.GetEnumerator() | Sort-Object -Property Value
         Write-Host "Here 2"
-        $Global:Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
+        $Script:Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
         Write-Host "Here 3"
         
     
-        foreach ($result in $Global:Results) {
+        foreach ($result in $Script:Results) {
             Write-Host "Here 4"
             $resultsListBox.Items.Add($result.Value)
         }
@@ -478,7 +460,7 @@ $button.Add_Click(
 $resultsButton.Add_Click(
     {
         $SelectFolder = [FolderBrowserDialog]::new()
-        foreach ($result in $Global:Results) {
+        foreach ($result in $Script:Results) {
             if ($resultsCheckBox1.Checked) {
                 Write-Host "$($result.Key)"
                 $uninstallArgs = "uninstall", "$($result.Key)"
