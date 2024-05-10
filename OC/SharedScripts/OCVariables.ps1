@@ -26,11 +26,11 @@ $OCVarHash = @{
     OpDir    = $OpDir
     OpSelectedFiles = $OpSelMultList
 }
-$OCVarHash | Export-Clixml -Path "$PSScriptRoot\Export\Vars.xml" -Force
+$OCVarHash | Export-Clixml -Path "$PSScriptRoot\..\Export\Vars.xml" -Force
 
 }
 
 function Get-OCVars {
-    $GetOCVars = Import-Clixml -Path "$PSScriptRoot\Export\Vars.xml"
+    $GetOCVars = Import-Clixml -Path "$PSScriptRoot\..\Export\Vars.xml"
     return $GetOCVars
 }

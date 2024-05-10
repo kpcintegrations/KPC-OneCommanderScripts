@@ -1,4 +1,4 @@
-function Get-OCParsedPath {
+function Get-OCPath {
 $OCPath = (Get-Process OneCommander).Path
 if ($OCPath.Contains('WindowsApp')) {
     $ParseOCPath = (Join-Path $Env:USERPROFILE '\OneCommander\')
