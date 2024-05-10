@@ -1,4 +1,3 @@
-#PS
 $OCPath = (Get-Process OneCommander).Path
 if ($OCPath.Contains('WindowsApp')) {
     $ParseOCPath = (Join-Path $Env:USERPROFILE '\OneCommander\')
@@ -9,5 +8,5 @@ elseif ($OCPath.Contains('Program Files')) {
 else {
 $ParseOCPath = (Get-Item -LiteralPath $OCPath).Directory.FullName
 }
-& (Join-Path $ParseOCPath 'Resources\KPC\Set-OCVariables.ps1') -CurrentDir $CurrentDir -SelMultiple $SelectedFiles -OpDir $OpDir
+& (Join-Path $ParseOCPath 'Resources\KPC\Set-OCVariables.ps1') -CurrentDir $env:Current_Dir -SelMultiple $env:Selected_Files
 & pwsh -File (Join-Path $ParseOCPath 'Resources\KPC\Invoke-PasteFromClipBoardHistory.ps1')
