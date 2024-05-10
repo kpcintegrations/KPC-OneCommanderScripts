@@ -9,11 +9,12 @@ $CurDir = $OCVars.CurrentDir
 $OpDir = $OCVars.OpDir
 $SelectedItems = $OCVars.SelectedFiles
 
-$DefaultFont =  [FontDialog]::new()
-$DefaultFont.ShowDialog()
+. "$PSScriptRoot\SharedScripts\Get-ADBDevice.ps1"
+
+$SelectedADBSerial = Get-ADBDevice
 
 $Script:CurFolPath = "/sdcard/"
-$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Script:CurFolPath)"
+$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "-s" $SelectedADBSerial "shell" "ls" "$($Script:CurFolPath)"
 
 $form = [Form]::new()
 $form.Size = [Size]::new(1000,900)
@@ -66,7 +67,7 @@ $listView.Add_DoubleClick({
     Write-Host "$($listView.SelectedItems[0].Text)"
     $Folder = $listView.SelectedItems[0].Text
     $Script:CurFolPath = $Script:CurFolPath + $Folder + "/"
-    $Items = adb shell ls $Script:CurFolPath
+    $Items = adb -s $SelectedADBSerial shell ls $Script:CurFolPath
     $listView.Clear()
     foreach ($Item in $Items) {
         if (!($Item -like "*.*")) {
@@ -135,10 +136,10 @@ $page1BottomButton1.Add_Click(
         Start-Sleep -Milliseconds 50
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_) $fbd.SelectedPath
+              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_) $fbd.SelectedPath
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_ + "/") $fbd.SelectedPath
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_ + "/") $fbd.SelectedPath
             }
         }
         Start-Sleep -Milliseconds 50
@@ -150,10 +151,10 @@ $page1BottomButton2.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_) $CurDir
+              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_) $CurDir
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_ + "/") $CurDir
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_ + "/") $CurDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -165,10 +166,10 @@ $page1BottomButton3.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_) $OpDir
+              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial  pull ($Script:CurFolPath + $_) $OpDir
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" pull ($Script:CurFolPath + $_ + "/") $OpDir
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial  pull ($Script:CurFolPath + $_ + "/") $OpDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -179,7 +180,7 @@ $page1BottomButton3.Add_Click(
 $page1BottomButton4.Add_Click(
     {
         $SelectedItems | ForEach-Object -Process {
-            & "$PSScriptRoot\Tools\adb.exe" push $_ ($Script:CurFolPath + "/")
+            & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial push $_ ($Script:CurFolPath + "/")
             }
         Start-Sleep -Milliseconds 50
             [MessageBox]::Show("All Files Have Transfered Successfully","Sucess!","Ok")
@@ -239,7 +240,7 @@ $page1MenuButton1.Add_Click(
             $TempList = $Script:PrePath.Split('/', [StringSplitOptions]::RemoveEmptyEntries)
             $RepText = $TempList[-1]
             $Script:PrePath = ($Script:PrePath).Replace("$RepText/","")
-            $Items = & "$PSScriptRoot\Tools\adb.exe" "shell" "ls" "$($Script:PrePath)"
+            $Items = & "$PSScriptRoot\Tools\adb.exe" "-s" $SelectedADBSerial "shell" "ls" "$($Script:PrePath)"
             $Script:CurFolPath = $Script:PrePath
             $ListView.Clear()
             foreach ($Item in $Items) {
@@ -282,7 +283,7 @@ $page2Button1.Add_Click(
 $page2BottomPanelButton.Add_Click(
     {
         foreach ($FileName in $page2FileSelectDialog.FileNames) {
-            & "$PSScriptRoot\Tools\adb.exe" install $FileName
+            & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial install $FileName
         }
         [MessageBox]::Show("Apk(s) Sucessfully Installed","Sucess!","Ok")
         $page2ListBoxSelectedFiles.Items.Clear()
@@ -415,7 +416,7 @@ $button.Add_Click(
         if (!($checkbox1.Checked) -and $checkbox2.Checked) {
             $Script:Args1 = "shell", "pm", "list", "packages", "-s", "-f"
         }
-        $NewLineSplitPackages = & "$PSScriptRoot\Tools\adb.exe" @Args1
+        $NewLineSplitPackages = & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial @Args1
         $ParsedADBPaths = @()
         $ParsedADBPackageNames = @()
         foreach ($line in $NewLineSplitPackages) {
@@ -431,7 +432,7 @@ $button.Add_Click(
         New-Item -Path "$PSScriptRoot\Export\ApkFiles\" -ItemType Directory -Force
         for ($i = 0; $i -lt $ParsedADBPaths.Count; $i++) {
             $Args2 = "pull", "$($ParsedADBPaths[$i])", "$PSScriptRoot\Export\ApkFiles\$($ParsedADBPackageNames[$i]).apk"
-            & "$PSScriptRoot\Tools\adb.exe" @Args2
+            & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial @Args2
             $progressBar.Increment(1)
         }
         $GetApks = Get-ChildItem -Path "$PSScriptRoot\Export\ApkFiles\" -File -Force
@@ -464,7 +465,7 @@ $resultsButton.Add_Click(
             if ($resultsCheckBox1.Checked) {
                 Write-Host "$($result.Key)"
                 $uninstallArgs = "uninstall", "$($result.Key)"
-                & "$PSScriptRoot\Tools\adb.exe" @uninstallArgs
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial @uninstallArgs
             }
             if ($resultsCheckBox2.Checked) {
                 if ($SelectFolder.ShowDialog() -eq "OK") {
@@ -474,11 +475,11 @@ $resultsButton.Add_Click(
             }
             if ($resultsCheckBox3.Checked) {
                 $cacheArgs = '-d', 'shell', 'pm', 'clear', '--cache-only', "$($result.Key)"
-                & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial @cacheArgs
             }
             if ($resultsCheckBox4) {
                 $cacheArgs = '-d', 'shell', 'pm', 'clear', "$($result.Key)"
-                & "$PSScriptRoot\Tools\adb.exe" @cacheArgs
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial @cacheArgs
             }
         }
     }
