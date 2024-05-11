@@ -17,7 +17,7 @@ $PhoneSelForm = [Form]::new()
 
 $PhoneSelForm.AutoSize = $true
 $PhoneSelForm.StartPosition = [FormStartPosition]::CenterScreen
-$PhoneSelForm.BackColor = [Color]::Black
+$PhoneSelForm.BackColor = [Color]::FromArgb(40, 44, 52)
 $PhoneSelForm.ForeColor = [Color]::White
 $PhoneSelForm.Padding = 25
 $PhoneSelForm.Text = "Select An ADB Device!"
@@ -30,6 +30,8 @@ $Label.Height = 50
 
 #ListBox For ADB Results
 $Listbox = [ListBox]::new()
+$Listbox.BackColor = [Color]::FromArgb(32, 34, 39)
+$Listbox.ForeColor = [Color]::White
 foreach ($Device in $ADBDevicesParse){
         $DeviceParse = $Device -split "device"
         $DeviceParseParse = $DeviceParse[0].Trim()
@@ -45,8 +47,9 @@ $OkButtonSB = {
 
 #OkButton
 $OkButton = New-Object Button
-$OkButton.Text = "Ok!"
-$OkButton.BackColor = [Color]::Red
+$OkButton.Text = "Ok"
+$OkButton.BackColor = [Color]::FromArgb(32, 34, 39)
+$OkButton.ForeColor = [Color]::White
 $OkButton.Add_Click($OkButtonSB)
 $OkButton.Dock = "Bottom"
 $PhoneSelForm.AcceptButton = $OkButton

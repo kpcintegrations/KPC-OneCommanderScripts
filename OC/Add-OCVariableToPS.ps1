@@ -19,6 +19,8 @@ else {
 $mainForm = New-Object System.Windows.Forms.Form
 $mainForm.Size = New-Object System.Drawing.Size(500,200)
 $mainForm.StartPosition = "CenterScreen"
+$mainForm.BackColor = [Color]::FromArgb(40, 44, 52)
+$mainForm.ForeColor = [Color]::White
 
 $label =  New-Object System.Windows.Forms.Label
 $label.Size =  New-Object System.Drawing.Size(400,25)
@@ -29,11 +31,15 @@ $textBox = New-Object System.Windows.Forms.TextBox
 $textBox.Size = New-Object System.Drawing.Size(400,25)
 $textBox.Location = New-Object System.Drawing.Size(50,50)
 $textBox.Text = (Get-Item -Path $OCVars.CurrentDir).Name
+$textBox.BackColor = [Color]::FromArgb(32, 34, 39)
+$textBox.ForeColor = [Color]::White
 
 $okButton = New-Object System.Windows.Forms.Button
 $okButton.Size = New-Object System.Drawing.Size(100,50)
 $okButton.Location = New-Object System.Drawing.Size(200,100)
 $okButton.Text = "OK"
+$okButton.BackColor = [Color]::FromArgb(32, 34, 39)
+$okButton.ForeColor = [Color]::White
 
 $mainForm.Controls.Add($label)
 $mainForm.Controls.Add($textBox)
@@ -44,7 +50,7 @@ New-Variable -Name "DirName" -Value "" -Scope "Global"
 $ButtonClickScript = {
         Set-Variable -Name "DirName" -Scope "Global" -Value $textBox.Text
 try {
-        $VarHash.Add((Get-Variable -Name "DirName" -Scope "Global" -ValueOnly),$CurrentDir)
+        $VarHash.Add((Get-Variable -Name "DirName" -Scope "Global" -ValueOnly),$OCVars.CurrentDir)
         $VarHash | Export-Clixml -Path (Join-Path $PSScriptRoot "\Export\CusPSVars.xml") -Force
         $mainForm.Close()
 }
@@ -60,7 +66,7 @@ $MessageTitle = "Duplicate Variable Name Detected"
 $Result = [System.Windows.Forms.MessageBox]::Show($MessageBody,$MessageTitle,$ButtonType,$MessageIcon)
 
 if ($Result -eq "Yes") {
-    $VarHash.Add((Get-Variable -Name "DirName" -Scope "Global" -ValueOnly),$CurrentDir)
+    $VarHash.Add((Get-Variable -Name "DirName" -Scope "Global" -ValueOnly),$OCVars.CurrentDir)
     $VarHash | Export-Clixml -Path (Join-Path $PSScriptRoot "\Export\CusPSVars.xml") -Force
     $mainForm.Close()
 }
