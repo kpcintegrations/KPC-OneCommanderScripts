@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$OCVars = Import-Clixml -Path (Join-Path $PSScriptRoot "\Export\Vars.xml")
+$OCVars = Get-OCVars
 $CurDir = $OCVars.CurrentDir
 $OpDir = $OCVars.OpDir
 

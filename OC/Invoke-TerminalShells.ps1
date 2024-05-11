@@ -4,6 +4,7 @@ try {
 catch {
     $wtContentJson = Get-Content -Path "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
 }
+$OCVars = Get-OCVars
 $wtContentObj = $wtContentJson | ConvertFrom-Json
 $promptGuids = $wtContentObj.profiles.list.guid
 $promptNames = $wtContentObj.profiles.list.name
@@ -19,7 +20,7 @@ $listBox = New-Object System.Windows.Forms.ListBox
 $listBox.Size = New-Object System.Drawing.Size(425,650)
 $listBox.Location = New-Object System.Drawing.Size(25,25)
 foreach ($promptName in $promptNames) {
-$listBox.Items.Add($promptName)
+$listBox.Items.Add($promptName) | Out-Null
 }
 
 $okButton = New-Object System.Windows.Forms.Button
@@ -31,12 +32,13 @@ $mainForm.Controls.Add($listBox)
 $mainForm.Controls.Add($okButton)
 
 $Global:LaunchTerminalCmd = {
-    wt -p $promptGuids[$listBox.SelectedIndex]
-    $mainForm.Close()
+    $CurGuid = $promptGuids[$listBox.SelectedIndex]
+    wt -p $CurGuid -d $OCVars.CurrentDir
+    $mainForm.Close() | Out-Null
 }
 
 $okButton.Add_Click($Global:LaunchTerminalCmd)
 
 
-$mainForm.ShowDialog()
+$mainForm.ShowDialog() | Out-Null
 
