@@ -4,17 +4,17 @@ using namespace System.Drawing
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$OCVars = Import-Clixml -Path "$PSScriptRoot\Export\Vars.xml"
+$OCVars = Get-OCVars
 $CurDir = $OCVars.CurrentDir
 $OpDir = $OCVars.OpDir
-$SelectedItems = $OCVars.SelectedFiles
-
-. "$PSScriptRoot\SharedScripts\Get-ADBDevice.ps1"
+$SelectedItems = $OCVars.SelectedFiles -split "\n"
 
 $SelectedADBSerial = Get-ADBDevice
 
-$Script:CurFolPath = "/sdcard/"
-$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "-s" $SelectedADBSerial "shell" "ls" "$($Script:CurFolPath)"
+adb kill-server
+
+$Global:CurFolPath = "/sdcard/"
+$adbInitFolders = & "$PSScriptRoot\Tools\adb.exe" "-s" $SelectedADBSerial "shell" "ls" "$($Global:CurFolPath)"
 
 $form = [Form]::new()
 $form.Size = [Size]::new(1000,900)
@@ -66,8 +66,8 @@ $listView.Add_DoubleClick({
     Write-Host "In The DoubleClick"
     Write-Host "$($listView.SelectedItems[0].Text)"
     $Folder = $listView.SelectedItems[0].Text
-    $Script:CurFolPath = $Script:CurFolPath + $Folder + "/"
-    $Items = adb -s $SelectedADBSerial shell ls $Script:CurFolPath
+    $Global:CurFolPath = $Global:CurFolPath + $Folder + "/"
+    $Items = adb -s $SelectedADBSerial shell ls $Global:CurFolPath
     $listView.Clear()
     foreach ($Item in $Items) {
         if (!($Item -like "*.*")) {
@@ -136,10 +136,10 @@ $page1BottomButton1.Add_Click(
         Start-Sleep -Milliseconds 50
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_) $fbd.SelectedPath
+              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Global:CurFolPath + $_) $fbd.SelectedPath
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_ + "/") $fbd.SelectedPath
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Global:CurFolPath + $_ + "/") $fbd.SelectedPath
             }
         }
         Start-Sleep -Milliseconds 50
@@ -151,10 +151,10 @@ $page1BottomButton2.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_) $CurDir
+              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Global:CurFolPath + $_) $CurDir
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Script:CurFolPath + $_ + "/") $CurDir
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial pull ($Global:CurFolPath + $_ + "/") $CurDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -166,10 +166,10 @@ $page1BottomButton3.Add_Click(
     {
         $listView.SelectedItems.Text | ForEach-Object -Process {
             if ($_ -like "*.*") {
-              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial  pull ($Script:CurFolPath + $_) $OpDir
+              & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial  pull ($Global:CurFolPath + $_) $OpDir
             }
             else {
-                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial  pull ($Script:CurFolPath + $_ + "/") $OpDir
+                & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial  pull ($Global:CurFolPath + $_ + "/") $OpDir
             }
         }
         Start-Sleep -Milliseconds 50
@@ -179,8 +179,10 @@ $page1BottomButton3.Add_Click(
 
 $page1BottomButton4.Add_Click(
     {
-        $SelectedItems | ForEach-Object -Process {
-            & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial push $_ ($Script:CurFolPath + "/")
+        Write-Host "In Button 4 Click"
+        $SelectedItems
+        $SelectedItems | ForEach-Object {
+            & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial push $_ ($Global:CurFolPath + "/")
             }
         Start-Sleep -Milliseconds 50
             [MessageBox]::Show("All Files Have Transfered Successfully","Sucess!","Ok")
@@ -235,13 +237,13 @@ $page2Panel.Controls.Add($page2BottomPanel)
 
 $page1MenuButton1.Add_Click(
     {
-            $Script:PrePath = $Script:CurFolPath
-            if ($Script:PrePath -ne "/sdcard/") {
-            $TempList = $Script:PrePath.Split('/', [StringSplitOptions]::RemoveEmptyEntries)
+            $Global:PrePath = $Global:CurFolPath
+            if ($Global:PrePath -ne "/sdcard/") {
+            $TempList = $Global:PrePath.Split('/', [StringSplitOptions]::RemoveEmptyEntries)
             $RepText = $TempList[-1]
-            $Script:PrePath = ($Script:PrePath).Replace("$RepText/","")
-            $Items = & "$PSScriptRoot\Tools\adb.exe" "-s" $SelectedADBSerial "shell" "ls" "$($Script:PrePath)"
-            $Script:CurFolPath = $Script:PrePath
+            $Global:PrePath = ($Global:PrePath).Replace("$RepText/","")
+            $Items = & "$PSScriptRoot\Tools\adb.exe" "-s" $SelectedADBSerial "shell" "ls" "$($Global:PrePath)"
+            $Global:CurFolPath = $Global:PrePath
             $ListView.Clear()
             foreach ($Item in $Items) {
                 if (!($Item -like "*.*")) {
@@ -406,15 +408,15 @@ $resultsButton.Text = "Clear Data"
 
 $button.Add_Click(
     {
-        $Script:Args1 = @()
+        $Global:Args1 = @()
         if ($checkbox1.Checked -and $checkbox2.Checked) {
-            $Script:Args1 = "shell", "pm", "list", "packages", "-a", "-f"
+            $Global:Args1 = "shell", "pm", "list", "packages", "-a", "-f"
         }
         if ($checkbox1.Checked -and !($checkbox2.Checked)) {
-            $Script:Args1 = "shell", "pm", "list", "packages", "-3", "-f"
+            $Global:Args1 = "shell", "pm", "list", "packages", "-3", "-f"
         }
         if (!($checkbox1.Checked) -and $checkbox2.Checked) {
-            $Script:Args1 = "shell", "pm", "list", "packages", "-s", "-f"
+            $Global:Args1 = "shell", "pm", "list", "packages", "-s", "-f"
         }
         $NewLineSplitPackages = & "$PSScriptRoot\Tools\adb.exe" -s $SelectedADBSerial @Args1
         $ParsedADBPaths = @()
@@ -448,11 +450,11 @@ $button.Add_Click(
         Write-Host "Here 1"
         $SortedApksByCommonName = $CommonNames.GetEnumerator() | Sort-Object -Property Value
         Write-Host "Here 2"
-        $Script:Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
+        $Global:Results = $SortedApksByCommonName | Out-GridView -Title "Apks & Names" -OutputMode Multiple
         Write-Host "Here 3"
         
     
-        foreach ($result in $Script:Results) {
+        foreach ($result in $Global:Results) {
             Write-Host "Here 4"
             $resultsListBox.Items.Add($result.Value)
         }
@@ -461,7 +463,7 @@ $button.Add_Click(
 $resultsButton.Add_Click(
     {
         $SelectFolder = [FolderBrowserDialog]::new()
-        foreach ($result in $Script:Results) {
+        foreach ($result in $Global:Results) {
             if ($resultsCheckBox1.Checked) {
                 Write-Host "$($result.Key)"
                 $uninstallArgs = "uninstall", "$($result.Key)"
