@@ -2,6 +2,7 @@ New-Item -Path "$PSScriptRoot\Export\" -ItemType Directory -Force
 $Path = "$PSScriptRoot\Export\"
 $ProfileContents = Get-Content -Path $PROFILE -Raw
 $RawProfileContent = @'
+#KPC-Integrations Script Pack For OneCommander Profile Code...don't remove this unless you want to reinstall after breaking the scripts(some).
 if (Test-Path -Path $Path\CusPSVars.xml) {
 $CustomVariables = Import-Clixml -Path "$Path\CusPSVars.xml"
 $CustomVariables.GetEnumerator() | ForEach-Object -Process { New-Variable -Name $_.Name -Value $_.Value -Option AllScope -Scope Global -Force }
@@ -11,7 +12,7 @@ else {
     $example.Add("ExampleVarPath","C:\Windows\System32\drivers\etc\")
     $example | Export-Clixml -Path "$Path\CusPSVars.xml" -Force
 }
-$OCPath = (Get-Process OneCommander).Path
+$OCPath = (Get-Process OneCommander | Select-Object -First 1).Path
 if ($OCPath.Contains('WindowsApp')) {
     $ParseOCPath = (Join-Path $Env:USERPROFILE '\OneCommander\')
 }
